@@ -34,3 +34,6 @@
 /config/master.key
 
 docs/
+
+# Ignore Node.js dependencies (managed via package.json / package-lock.json).
+node_modules/

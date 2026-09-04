@@ -1,0 +1,8 @@
+node_modules/
+public/
+vendor/
+tmp/
+log/
+storage/
+db/schema.rb
+docs/
