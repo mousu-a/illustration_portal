@@ -10,8 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 0) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_04_043027) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "reference_archives", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "url", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "url"], name: "index_reference_archives_on_user_id_and_url", unique: true
+    t.index ["user_id"], name: "index_reference_archives_on_user_id"
+  end
+
+  create_table "taggings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "reference_archive_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reference_archive_id", "tag_id"], name: "index_taggings_on_reference_archive_id_and_tag_id", unique: true
+    t.index ["tag_id"], name: "index_taggings_on_tag_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_tags_on_name", unique: true
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "avatar_url"
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "name"
+    t.string "provider", null: false
+    t.string "uid", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
+  end
+
+  add_foreign_key "reference_archives", "users"
+  add_foreign_key "taggings", "reference_archives"
+  add_foreign_key "taggings", "tags"
 end
