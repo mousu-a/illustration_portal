@@ -1,0 +1,17 @@
+{
+  "name": "illustration_portal",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "eslint --fix app/javascript && prettier --write app/javascript"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.6"
+  }
+}
