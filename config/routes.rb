@@ -9,6 +9,11 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  root "welcome#index"
+
+  get "/auth/:provider/callback", to: "sessions#create"
+  delete "/logout", to: "sessions#destroy"
+
+  resources :reference_archives, only: [ :index, :create, :edit, :update, :destroy ]
+  resources :tags, only: [ :index ]
 end
