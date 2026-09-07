@@ -18,6 +18,8 @@ gem "stimulus-rails"
 gem "jbuilder"
 # Use Slim as the template engine [https://github.com/slim-template/slim-rails]
 gem "slim-rails"
+# Add tagging functionality [https://github.com/mbleigh/acts-as-taggable-on]
+gem "acts-as-taggable-on"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
