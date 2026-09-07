@@ -14,6 +14,6 @@ Rails.application.routes.draw do
   get "/auth/:provider/callback", to: "sessions#create"
   delete "/logout", to: "sessions#destroy"
 
-  resources :reference_archives, only: [ :index, :create, :edit, :update, :destroy ]
+  resources :reference_archives, only: [ :index, :create, :update, :destroy ]
   resources :tags, only: [ :index ]
 end
