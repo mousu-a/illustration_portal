@@ -21,6 +21,7 @@ gem "stimulus-rails"
 gem "slim-rails"
 gem "acts-as-taggable-on"
 gem "kaminari"
+gem "rails-i18n"
 
 
 group :development, :test do

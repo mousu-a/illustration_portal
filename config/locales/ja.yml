@@ -1,0 +1,8 @@
+ja:
+  activerecord:
+    models:
+      reference_archive: "ブックマーク"
+    attributes:
+      reference_archive:
+        url: "URL"
+        tag_list: "タグ"
