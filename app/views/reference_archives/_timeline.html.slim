@@ -1,0 +1,4 @@
+- if reference_archives.empty?
+  = render "timeline_empty"
+ul.timeline id="timeline_list"
+  = render partial: "archive", collection: reference_archives, as: :archive

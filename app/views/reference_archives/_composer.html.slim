@@ -1,0 +1,19 @@
+.composer id="composer"
+  .composer__body data-controller="tag-list" data-action="submit->tag-list#convertToParams"
+    = form_with model: reference_archive, class: "composer__form" do |f|
+      = render "form_errors", record: reference_archive
+      - @selected_tags.each do |tag_name|
+        = hidden_field_tag "tags[]", tag_name, id: nil
+      .composer__row
+        = f.label :url, "ブックマークしたい画像のURL", class: "composer__label"
+        = f.text_field :url,
+          class: "composer__input",
+          placeholder: "例：https://x.com/example_user/status/1234567890123456789"
+      .composer__row
+        = f.label :tag_list, "ブックマークにつけるタグ", class: "composer__label"
+        = f.text_field :tag_list,
+          class: "composer__input",
+          placeholder: "例：背景 逆光 後ろ（スペース区切り）",
+          data: { tag_list_target: "tagsInput" }
+      .composer__actions
+        = f.submit "登録する", class: "btn"

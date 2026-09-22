@@ -1,0 +1,10 @@
+= turbo_stream.remove dom_id(@reference_archive)
+= turbo_stream.replace "pagination-wrapper" do
+  = render "pagination", reference_archives: @reference_archives
+- if @reference_archives.empty?
+  = turbo_stream.before "timeline_list" do
+    = render "timeline_empty"
+= turbo_stream.replace "sidebar" do
+  = render "sidebar", tags: @tags, selected_tags: @selected_tags
+= turbo_stream.update "flash" do
+  = render "layouts/flash_content"

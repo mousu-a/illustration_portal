@@ -1,0 +1,39 @@
+- edit_target = edit_target_for(archive)
+li.tweet id=dom_id(archive) data-controller="tag-list edit-form"
+  .tweet__show data-edit-form-target="show"
+    .tweet__body
+      .tweet__header
+        button.tweet__edit-toggle type="button" data-action="click->edit-form#toggle"
+          | 編集
+        a.tweet__remove[
+          href=reference_archive_path(archive)
+          data-turbo-method="delete"
+          data-turbo-confirm="ブックマークのピンを外しますか？（ブックマークを削除する）"
+        ] 削除
+      .tweet__text
+        = link_to archive.url, archive.url,
+          class: "tweet__url", target: "_blank", rel: "noopener"
+      - if archive.tags.present?
+        .tweet__tags
+          - archive.tags.each do |tag|
+            = link_to "##{tag.name}",
+              selected_tags_path(tag.name, current_selected_tags: @selected_tags),
+              class: "tag-pill", data: { tag_name: tag.name }
+  .tweet__edit.hidden[
+    data-edit-form-target="editForm"
+    data-action="submit->tag-list#convertToParams"
+  ]
+    = form_with model: edit_target, class: "composer__form" do |f|
+      = render "form_errors", record: edit_target
+      .composer__row
+        = f.label :url, "URL", class: "composer__label"
+        = f.text_field :url, class: "composer__input", value: edit_target.url
+      .composer__row
+        = f.label :tag_list, "タグ", class: "composer__label"
+        = f.text_field :tag_list,
+          class: "composer__input",
+          value: edit_target.tags.map(&:name).join(" "),
+          data: { tag_list_target: "tagsInput" }
+      .composer__actions
+        = f.submit "更新する", class: "btn"
+        button.btn type="button" data-action="click->edit-form#toggle" キャンセル
