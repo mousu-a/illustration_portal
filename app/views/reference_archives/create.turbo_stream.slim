@@ -1,0 +1,18 @@
+= turbo_stream.update "flash" do
+  = render "layouts/flash_content"
+
+- if @create_reference_archive.persisted?
+  - if @create_reference_archive.included_in_tag_filter?(@selected_tags)
+    = turbo_stream.remove "timeline_empty"
+    = turbo_stream.prepend "timeline_list" do
+      = render "archive", archive: @create_reference_archive
+    = turbo_stream.replace "pagination-wrapper" do
+      = render "pagination", reference_archives: @reference_archives
+  = turbo_stream.replace "sidebar" do
+    = render "sidebar", tags: @tags, selected_tags: @selected_tags
+  = turbo_stream.replace "composer" do
+    = render "composer", reference_archive: @composer_reference_archive
+
+- else
+  = turbo_stream.replace "composer" do
+    = render "composer", reference_archive: @create_reference_archive

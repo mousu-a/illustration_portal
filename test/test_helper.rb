@@ -11,5 +11,11 @@ module ActiveSupport
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
+
+    # ApplicationController#current_user と同じ固定devユーザーを返す
+    # TODO: ユーザー認証を実装したら削除する
+    def dev_user
+      @dev_user ||= User.find_or_create_dev_user
+    end
   end
 end

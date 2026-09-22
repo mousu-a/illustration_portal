@@ -1,0 +1,9 @@
+.tag-filter-display
+  span.filter-label このタグで絞り込み中
+  .selected-tags
+    - selected_tags.each do |tag_name|
+      = link_to tag_deselect_path(tag_name, current_selected_tags: selected_tags),
+        class: "selected-tag", data: { tag_name: tag_name } do
+        = "##{tag_name}"
+        span.remove-icon ×
+  = link_to "タグによる絞り込みを全解除", reference_archives_path, class: "clear-all-btn"

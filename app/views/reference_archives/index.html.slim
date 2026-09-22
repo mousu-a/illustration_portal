@@ -1,2 +1,14 @@
-h1 ReferenceArchives#index
-p Find me in app/views/reference_archives/index.html.slim
+.section.reference-archives data-controller="form-errors" data-action="turbo:before-stream-render@document->form-errors#clearStaleErrors"
+  .ra-container
+    = render "composer", reference_archive: @composer_reference_archive
+
+    = turbo_frame_tag "reference_archives_timeline", data: { turbo_action: "advance" } do
+      - if @selected_tags.present?
+        = render "selected_tags_display", selected_tags: @selected_tags
+
+      .ra-main-content
+        .timeline-section
+          #timeline_container
+            = render "timeline", reference_archives: @reference_archives
+          = render "pagination", reference_archives: @reference_archives
+        = render "sidebar", tags: @tags, selected_tags: @selected_tags

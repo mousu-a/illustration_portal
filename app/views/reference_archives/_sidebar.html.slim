@@ -1,0 +1,12 @@
+.sidebar id="sidebar"
+  .sidebar__section
+    h3.sidebar__title タグでブクマを絞り込む
+    .sidebar__tags
+      - if tags.present?
+        - tags.each do |tag|
+          = link_to "##{tag.name} (#{tag.count})",
+            selected_tags_path(tag.name, current_selected_tags: selected_tags),
+            class: "tag-pill sidebar__tag",
+            data: { tag_name: tag.name }
+      - else
+        p.sidebar__empty まだタグがありません
