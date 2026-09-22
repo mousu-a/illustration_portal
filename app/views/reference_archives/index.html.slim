@@ -1,4 +1,7 @@
-.section.reference-archives data-controller="form-errors" data-action="turbo:before-stream-render@document->form-errors#clearStaleErrors"
+.section.reference-archives[
+  data-controller="form-errors"
+  data-action="turbo:before-stream-render@document->form-errors#clearStaleErrors"
+]
   .ra-container
     = render "composer", reference_archive: @composer_reference_archive
 

@@ -6,7 +6,9 @@
         = hidden_field_tag "tags[]", tag_name, id: nil
       .composer__row
         = f.label :url, "ブックマークしたい画像のURL", class: "composer__label"
-        = f.text_field :url, class: "composer__input", placeholder: "例：https://x.com/example_user/status/1234567890123456789"
+        = f.text_field :url,
+          class: "composer__input",
+          placeholder: "例：https://x.com/example_user/status/1234567890123456789"
       .composer__row
         = f.label :tag_list, "ブックマークにつけるタグ", class: "composer__label"
         = f.text_field :tag_list,
