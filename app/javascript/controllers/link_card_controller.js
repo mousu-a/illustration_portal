@@ -13,10 +13,9 @@ export default class extends Controller {
     if (!url) return;
 
     try {
-      const response = await fetch(
-        `/api/metadata?url=${encodeURIComponent(url)}`,
-        { headers: { "X-Requested-With": "XMLHttpRequest" } }
-      );
+      const response = await fetch(`/api/metadata?url=${encodeURIComponent(url)}`, {
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      });
       if (!response.ok) return;
 
       const metadata = await response.json();
