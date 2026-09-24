@@ -8,6 +8,7 @@ module LoginSupport
       visit root_path
       click_on "Googleでログイン"
 
+      assert_current_path reference_archives_path
       assert_text "ログインしました"
     end
   end
