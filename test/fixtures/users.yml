@@ -13,3 +13,10 @@ sato:
   uid: uid-sato
   name: Sato Hanako
   avatar_url: https://example.com/sato.png
+
+tanaka:
+  email: tanaka@example.com
+  provider: google_oauth2
+  uid: uid-tanaka
+  name: Tanaka Jiro
+  avatar_url: https://example.com/tanaka.png

@@ -2,7 +2,17 @@ require "test_helper"
 
 class ReferenceArchivesTest < ActionDispatch::IntegrationTest
   setup do
+    @user = users(:tanaka)
     @other_user = users(:sato)
+    login(@user)
+  end
+
+  test "#index 未ログインの場合はトップページへリダイレクトする" do
+    delete logout_path
+
+    get reference_archives_path
+
+    assert_redirected_to root_path
   end
 
   test "index はブックマークが1件も無いとき空メッセージを表示する" do
@@ -12,9 +22,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_match "ブックマークが見つからないようです", response.body
   end
 
-  # TODO ログイン後変更
   test "index はタグ絞り込みでヒットしないとき空メッセージを表示する" do
-    dev_user.reference_archives.create!(url: "https://example.com/no-match", tag_list: "illustration")
+    @user.reference_archives.create!(url: "https://example.com/no-match", tag_list: "illustration")
 
     get reference_archives_path, params: { tags: [ "nonexistent" ] }
 
@@ -22,9 +31,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_match "ブックマークが見つからないようです", response.body
   end
 
-  # TODO ログイン後変更
   test "index は自分のブックマークのみ表示する" do
-    mine = dev_user.reference_archives.create!(url: "https://example.com/mine")
+    mine = @user.reference_archives.create!(url: "https://example.com/mine")
     others = @other_user.reference_archives.create!(url: "https://example.com/others")
 
     get reference_archives_path
@@ -34,10 +42,9 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_no_match others.url, response.body
   end
 
-  # TODO ログイン後変更
   test "index はタグでAND絞り込みできる" do
-    exact = dev_user.reference_archives.create!(url: "https://example.com/matched", tag_list: "ruby, rails")
-    partial = dev_user.reference_archives.create!(url: "https://example.com/partial", tag_list: "ruby")
+    exact = @user.reference_archives.create!(url: "https://example.com/matched", tag_list: "ruby, rails")
+    partial = @user.reference_archives.create!(url: "https://example.com/partial", tag_list: "ruby")
 
     get reference_archives_path, params: { tags: [ "ruby", "rails" ] }
 
@@ -46,14 +53,13 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_no_match partial.url, response.body
   end
 
-  # TODO ログイン後変更
   test "create で保存できる" do
     assert_difference("ReferenceArchive.count", 1) do
       post reference_archives_path, params: { reference_archive: { url: "https://example.com/new", tag_list: [ "illustration" ] } }
     end
 
     assert_redirected_to reference_archives_path
-    assert_equal [ "illustration" ], dev_user.reference_archives.last.tags.pluck(:name)
+    assert_equal [ "illustration" ], @user.reference_archives.last.tags.pluck(:name)
   end
 
   test "create成功時、リダイレクトしても絞り込み中のタグを維持している" do
@@ -90,9 +96,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_select ".form-errors"
   end
 
-  # TODO ログイン後変更
   test "create成功時、一覧の先頭に追加する" do
-    dev_user.reference_archives.create!(url: "https://example.com/existing")
+    @user.reference_archives.create!(url: "https://example.com/existing")
 
     assert_difference("ReferenceArchive.count", 1) do
       post reference_archives_path,
@@ -122,9 +127,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_match "form-errors", response.body
   end
 
-  # TODO ログイン後変更
   test "update で自分のブックマークを更新できる" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/before")
+    archive = @user.reference_archives.create!(url: "https://example.com/before")
 
     patch reference_archive_path(archive), params: { reference_archive: { url: "https://example.com/after" } }
 
@@ -141,9 +145,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_equal "https://example.com/others", archive.reload.url
   end
 
-  # TODO ログイン後変更
   test "update は url が空だと失敗する" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/before")
+    archive = @user.reference_archives.create!(url: "https://example.com/before")
 
     patch reference_archive_path(archive), params: { reference_archive: { url: "" } }
 
@@ -151,9 +154,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_equal "https://example.com/before", archive.reload.url
   end
 
-  # TODO ログイン後変更
   test "update成功時、該当のレコードをreplaceする" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/before")
+    archive = @user.reference_archives.create!(url: "https://example.com/before")
 
     patch reference_archive_path(archive),
       params: { reference_archive: { url: "https://example.com/after" } },
@@ -164,9 +166,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_match "更新しました", response.body
   end
 
-  # TODO ログイン後変更
   test "update失敗時、該当のレコードでformエラーを表示する" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/before")
+    archive = @user.reference_archives.create!(url: "https://example.com/before")
 
     patch reference_archive_path(archive),
       params: { reference_archive: { url: "" } },
@@ -176,9 +177,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_match "form-errors", response.body
   end
 
-  # TODO ログイン後変更
   test "destroy で自分のブックマークを削除できる" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/deleteme")
+    archive = @user.reference_archives.create!(url: "https://example.com/deleteme")
 
     assert_difference("ReferenceArchive.count", -1) do
       delete reference_archive_path(archive)
@@ -198,9 +198,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  # TODO ログイン後変更
   test "destroy成功時、該当のレコードをremoveする" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/deleteme")
+    archive = @user.reference_archives.create!(url: "https://example.com/deleteme")
 
     assert_difference("ReferenceArchive.count", -1) do
       delete reference_archive_path(archive), as: :turbo_stream
@@ -210,9 +209,8 @@ class ReferenceArchivesTest < ActionDispatch::IntegrationTest
     assert_match "削除しました", response.body
   end
 
-  # TODO ログイン後変更
   test "destroy成功時、一覧が空になった場合は空メッセージを表示する" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/deleteme")
+    archive = @user.reference_archives.create!(url: "https://example.com/deleteme")
 
     delete reference_archive_path(archive), as: :turbo_stream
 

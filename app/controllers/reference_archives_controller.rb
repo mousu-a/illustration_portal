@@ -1,4 +1,5 @@
 class ReferenceArchivesController < ApplicationController
+  before_action :require_login
   before_action :set_reference_archive, only: [ :update, :destroy ]
 
   def index

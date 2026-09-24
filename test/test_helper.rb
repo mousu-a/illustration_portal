@@ -3,6 +3,8 @@ require_relative "../config/environment"
 require "rails/test_help"
 require "minitest/mock"
 
+Rails.root.glob("test/support/**/*.rb").sort_by(&:to_s).each { |f| require f }
+
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers
@@ -11,12 +13,12 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    include OmniAuthSupport
+  end
+end
 
-    # ApplicationController#current_user と同じ固定devユーザーを返す
-    # TODO: ユーザー認証を実装したら削除する
-    def dev_user
-      @dev_user ||= User.find_or_create_dev_user
-    end
+module ActionDispatch
+  class IntegrationTest
+    include LoginSupport::Request
   end
 end

@@ -23,6 +23,8 @@ gem "slim-rails"
 gem "acts-as-taggable-on"
 gem "kaminari"
 gem "rails-i18n"
+gem "omniauth-google-oauth2", "~> 1.2"
+gem "omniauth-rails_csrf_protection", "~> 2.0"
 
 gem "addressable"
 gem "open_graph_reader"
@@ -33,6 +35,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "bundler-audit", require: false
   gem "brakeman", require: false
+  gem "dotenv-rails"
   gem "rubocop-rails-omakase", require: false
 
   gem "slim_lint", require: false

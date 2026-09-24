@@ -1,6 +1,11 @@
 require "application_system_test_case"
 
 class ReferenceArchivesTest < ApplicationSystemTestCase
+  setup do
+    @user = users(:tanaka)
+    login(@user)
+  end
+
   test "空白区切りで複数タグを付けてブックマークを登録する" do
     visit reference_archives_path
 
@@ -46,9 +51,8 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     end
   end
 
-  # TODO ログイン後変更
   test "ブックマークを削除する" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/deleteme")
+    archive = @user.reference_archives.create!(url: "https://example.com/deleteme")
     visit reference_archives_path
 
     within "li.tweet", text: archive.url do
@@ -58,9 +62,8 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_no_text archive.url
   end
 
-  # TODO ログイン後変更
   test "ブックマークを更新する" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/before")
+    archive = @user.reference_archives.create!(url: "https://example.com/before")
     visit reference_archives_path
 
     within "li.tweet", text: archive.url do
@@ -73,11 +76,10 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_no_text "https://example.com/before"
   end
 
-  # TODO ログイン後変更
   test "タグによりブックマークを絞り込む(AND)" do
-    both = dev_user.reference_archives.create!(url: "https://example.com/both", tag_list: "ruby, rails")
-    ruby_only = dev_user.reference_archives.create!(url: "https://example.com/ruby-only", tag_list: "ruby")
-    unrelated = dev_user.reference_archives.create!(url: "https://example.com/unrelated", tag_list: "illustration")
+    both = @user.reference_archives.create!(url: "https://example.com/both", tag_list: "ruby, rails")
+    ruby_only = @user.reference_archives.create!(url: "https://example.com/ruby-only", tag_list: "ruby")
+    unrelated = @user.reference_archives.create!(url: "https://example.com/unrelated", tag_list: "illustration")
 
     visit reference_archives_path
 
@@ -94,10 +96,9 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_current_path reference_archives_path(tags: [ "ruby", "rails" ])
   end
 
-  # TODO ログイン後変更
   test "絞り込み中のタグを1つずつ解除する" do
-    both = dev_user.reference_archives.create!(url: "https://example.com/both", tag_list: "ruby, rails")
-    ruby_only = dev_user.reference_archives.create!(url: "https://example.com/ruby-only", tag_list: "ruby")
+    both = @user.reference_archives.create!(url: "https://example.com/both", tag_list: "ruby, rails")
+    ruby_only = @user.reference_archives.create!(url: "https://example.com/ruby-only", tag_list: "ruby")
 
     visit reference_archives_path(tags: [ "ruby", "rails" ])
 
@@ -115,10 +116,9 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_text ruby_only.url
   end
 
-  # TODO ログイン後変更
   test "絞り込み中のタグを一括で解除する" do
-    both = dev_user.reference_archives.create!(url: "https://example.com/both", tag_list: "ruby, rails")
-    unrelated = dev_user.reference_archives.create!(url: "https://example.com/unrelated", tag_list: "illustration")
+    both = @user.reference_archives.create!(url: "https://example.com/both", tag_list: "ruby, rails")
+    unrelated = @user.reference_archives.create!(url: "https://example.com/unrelated", tag_list: "illustration")
 
     visit reference_archives_path(tags: [ "ruby", "rails" ])
     assert_text both.url
@@ -132,9 +132,8 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_text unrelated.url
   end
 
-  # TODO ログイン後変更
   test "タグの絞り込みをしても、関係のない部分はリロードされない" do
-    dev_user.reference_archives.create!(url: "https://example.com/ruby", tag_list: "ruby")
+    @user.reference_archives.create!(url: "https://example.com/ruby", tag_list: "ruby")
     visit reference_archives_path
 
     fill_in "ブックマークしたい画像のURL", with: "https://example.com/not-submitted-yet"
@@ -145,9 +144,8 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_field "ブックマークしたい画像のURL", with: "https://example.com/not-submitted-yet"
   end
 
-  # TODO ログイン後変更
   test "フォームのエラーメッセージ表示は、別のブックマークを登録・更新・削除するとリセットされる" do
-    archive = dev_user.reference_archives.create!(url: "https://example.com/to-delete")
+    archive = @user.reference_archives.create!(url: "https://example.com/to-delete")
     error_message = "URLを入力してください"
 
     visit reference_archives_path
