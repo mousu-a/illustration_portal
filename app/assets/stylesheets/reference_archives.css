@@ -328,7 +328,6 @@ turbo-frame#reference_archives_timeline{
 
 .tweet__body{ display:flex; flex-direction:column; gap:8px; min-width:0; }
 
-/* タグ行が下にあっても画像+タイトル帯の高さだけを基準にできるよう、専用のラップを position:relative にする */
 .tweet__link-area{ position:relative; }
 
 .tweet__header{
@@ -336,7 +335,6 @@ turbo-frame#reference_archives_timeline{
   font-size:14px; color:var(--sub);
   padding:14px 14px 0;
 }
-/* 画像付きリンクカードになった場合は、削除ボタンをタイトル帯と同じ行に重ねて表示する */
 .tweet:has(.link-card__image) .tweet__header{
   position:absolute;
   right:12px;
@@ -400,7 +398,6 @@ turbo-frame#reference_archives_timeline{
   display:flex;
   align-items:center;
   gap:10px;
-  /* 右側は絶対配置の編集/削除ボタン分のスペースを空けておく */
   padding:8px 190px 8px 12px;
   background:#fff;
   color:inherit;
@@ -440,7 +437,6 @@ turbo-frame#reference_archives_timeline{
   font-size:11px;
   color:var(--sub);
 }
-/* タイトルが主役、タグバーはそれより控えめな見た目にする */
 .tweet__tags .tag-pill{
   font-size:11px;
   padding:4px 8px;
