@@ -1,6 +1,6 @@
 require "test_helper"
 
-class ReferenceArchivesTest < ActionDispatch::IntegrationTest
+class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:tanaka)
     @other_user = users(:sato)
