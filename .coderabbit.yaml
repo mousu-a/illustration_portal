@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "ja-JP"
+reviews:
+  path_instructions:
+    - path: "**/*.rb"
+      instructions: |-
+        # refactoring
+        - まずFat Controllerを避け、次にFat Modelを避ける。
+        # Unit Test
+        - model, helper, decorator, view_componentについてはメソッドを追加した場合は必ず対応したUnit TestのTestCaseを1つは書く。
+    - path: "test/**/*"
+      instructions: |-
+        # Test
+        - system testは極力書かず、model test・request testなど他のテストで検証できるものはそちらで対応する。system testはユーザー動線の確認に限定する。
+        - どうしても避けられない時以外にsystem testでsleepは使わない。
