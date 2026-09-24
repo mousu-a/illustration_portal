@@ -435,6 +435,11 @@ turbo-frame#reference_archives_timeline{
   display:flex; flex-wrap:wrap; gap:6px;
   min-width:0;
 }
+.tweet__tags-empty{
+  margin:0;
+  font-size:11px;
+  color:var(--sub);
+}
 /* タイトルが主役、タグバーはそれより控えめな見た目にする */
 .tweet__tags .tag-pill{
   font-size:11px;
