@@ -1,24 +1,25 @@
 - edit_target = edit_target_for(archive)
-li.tweet id=dom_id(archive) data-controller="tag-list edit-form"
+li.tweet id=dom_id(archive) data-controller="tag-list edit-form link-card"
   .tweet__show data-edit-form-target="show"
     .tweet__body
-      .tweet__header
-        button.tweet__edit-toggle type="button" data-action="click->edit-form#toggle"
-          | 編集
-        a.tweet__remove[
-          href=reference_archive_path(archive)
-          data-turbo-method="delete"
-          data-turbo-confirm="ブックマークのピンを外しますか？（ブックマークを削除する）"
-        ] 削除
-      .tweet__text
-        = link_to archive.url, archive.url,
-          class: "tweet__url", target: "_blank", rel: "noopener"
-      - if archive.tags.present?
-        .tweet__tags
+      .tweet__link-area
+        .tweet__header
+          a.tweet__remove[
+            href=reference_archive_path(archive)
+            data-turbo-method="delete"
+            data-turbo-confirm="ブックマークのピンを外しますか？（ブックマークを削除する）"
+          ] ブクマを外す
+        .tweet__text
+          = link_to archive.url, archive.url,
+            class: "tweet__url", target: "_blank", rel: "noopener"
+      .tweet__tags
+        .tweet__tags-list
           - archive.tags.each do |tag|
             = link_to "##{tag.name}",
               selected_tags_path(tag.name, current_selected_tags: @selected_tags),
               class: "tag-pill", data: { tag_name: tag.name }
+        button.tweet__edit-toggle type="button" data-action="click->edit-form#toggle"
+          | タグを編集
   .tweet__edit.hidden[
     data-edit-form-target="editForm"
     data-action="submit->tag-list#convertToParams"

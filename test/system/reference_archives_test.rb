@@ -15,13 +15,44 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     end
   end
 
+  test "ブックマークのURLがリンクカードとして展開される" do
+    metadata = { title: "リンクカードタイトル", image_url: "https://example.com/image.png", favicon_url: "https://example.com/favicon.ico" }
+
+    LinkCard.stub(:fetch_metadata, metadata) do
+      visit reference_archives_path
+
+      fill_in "ブックマークしたい画像のURL", with: "https://example.com/article"
+      click_on "登録する"
+
+      within ".timeline" do
+        assert_selector ".link-card"
+        assert_text "リンクカードタイトル"
+        assert_no_selector ".tweet__url"
+      end
+    end
+  end
+
+  test "存在しないURLはリンクカードとして展開されない" do
+    LinkCard.stub(:fetch_metadata, nil) do
+      visit reference_archives_path
+
+      fill_in "ブックマークしたい画像のURL", with: "https://example.aabbcc/broken"
+      click_on "登録する"
+
+      within ".timeline" do
+        assert_no_selector ".link-card"
+        assert_link "https://example.aabbcc/broken"
+      end
+    end
+  end
+
   # TODO ログイン後変更
   test "ブックマークを削除する" do
     archive = dev_user.reference_archives.create!(url: "https://example.com/deleteme")
     visit reference_archives_path
 
     within "li.tweet", text: archive.url do
-      accept_confirm { click_on "削除" }
+      accept_confirm { click_on "ブクマを外す" }
     end
 
     assert_no_text archive.url
@@ -33,7 +64,7 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     visit reference_archives_path
 
     within "li.tweet", text: archive.url do
-      click_on "編集"
+      click_on "タグを編集"
       fill_in "URL", with: "https://example.com/after"
       click_on "更新する"
     end
@@ -124,7 +155,7 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     click_on "登録する"
     assert_text error_message
     within "li.tweet", text: archive.url do
-      accept_confirm { click_on "削除" }
+      accept_confirm { click_on "ブクマを外す" }
     end
     assert_text "削除しました"
     assert_no_text error_message
@@ -139,7 +170,7 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     click_on "登録する"
     assert_text error_message
     within "li.tweet", text: "https://example.com/new-bookmark" do
-      click_on "編集"
+      click_on "タグを編集"
       fill_in "URL", with: "https://example.com/updated-bookmark"
       click_on "更新する"
     end

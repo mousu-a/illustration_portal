@@ -15,4 +15,8 @@ Rails.application.routes.draw do
   delete "/logout", to: "sessions#destroy"
 
   resources :reference_archives, only: [ :index, :create, :update, :destroy ]
+
+  namespace :api do
+    resources :metadata, only: :index
+  end
 end
