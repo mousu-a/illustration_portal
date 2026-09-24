@@ -6,3 +6,5 @@ ja:
       reference_archive:
         url: "URL"
         tag_list: "タグ"
+  users:
+    guest: "ゲスト"

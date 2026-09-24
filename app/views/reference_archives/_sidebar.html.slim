@@ -10,3 +10,9 @@
             data: { tag_name: tag.name }
       - else
         p.sidebar__empty まだタグがありません
+
+  / TODO：へッダー作ったら位置調整
+  .sidebar__section
+    = button_to "ログアウト", logout_path, method: :delete, form: { data: { turbo_frame: "_top" } }
+    = button_to "退会する", user_path(current_user), method: :delete,
+      form: { data: { turbo_frame: "_top", turbo_confirm: "退会するとブックマークもすべて削除されます。よろしいですか？" } }

@@ -2,7 +2,17 @@ require "test_helper"
 
 class ReferenceArchivesTest < ActionDispatch::IntegrationTest
   setup do
+    @user = users(:tanaka)
     @other_user = users(:sato)
+    login(@user)
+  end
+
+  test "#index 未ログインの場合はトップページへリダイレクトする" do
+    delete logout_path
+
+    get reference_archives_path
+
+    assert_redirected_to root_path
   end
 
   test "index はブックマークが1件も無いとき空メッセージを表示する" do

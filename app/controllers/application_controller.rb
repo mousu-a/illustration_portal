@@ -9,8 +9,13 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # TODO: Google OAuth実装Issueで session[:user_id] を使った本実装に差し替える
   def current_user
-    @current_user ||= User.find_or_create_dev_user
+    return @current_user if defined?(@current_user)
+
+    @current_user = User.find_by(id: session[:user_id])
+  end
+
+  def require_login
+    redirect_to root_path, alert: "ログインしてください" unless current_user
   end
 end

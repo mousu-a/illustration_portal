@@ -12,8 +12,10 @@ Rails.application.routes.draw do
   root "welcome#index"
 
   get "/auth/:provider/callback", to: "sessions#create"
-  delete "/logout", to: "sessions#destroy"
+  get "/auth/failure", to: "sessions#auth_failure", as: :auth_failure
+  delete "/logout", to: "sessions#destroy", as: "logout"
 
+  resources :users, only: :destroy
   resources :reference_archives, only: [ :index, :create, :update, :destroy ]
 
   namespace :api do
