@@ -24,6 +24,10 @@ gem "acts-as-taggable-on"
 gem "kaminari"
 gem "rails-i18n"
 
+gem "addressable"
+gem "open_graph_reader"
+gem "ssrf_filter"
+
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -41,4 +45,5 @@ end
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
+  gem "minitest-mock"
 end
