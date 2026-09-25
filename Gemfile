@@ -24,6 +24,7 @@ gem "acts-as-taggable-on"
 gem "kaminari"
 gem "rails-i18n"
 gem "omniauth-google-oauth2", "~> 1.2"
+gem "meta-tags"
 gem "omniauth-rails_csrf_protection", "~> 2.0"
 
 gem "addressable"
