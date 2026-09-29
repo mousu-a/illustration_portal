@@ -1,0 +1,5 @@
+header.site-header
+  .site-header__inner
+    = link_to "Illustration Portal", root_path, class: "site-header__logo"
+    - if current_user
+      = render "layouts/account_menu"

@@ -6,7 +6,7 @@ export default class extends Controller {
   }
 
   async convertLinkToCard() {
-    const targetLink = this.element.querySelector(".tweet__url");
+    const targetLink = this.element.querySelector(".archive__url");
     if (!targetLink) return;
 
     const url = targetLink.href;
@@ -53,11 +53,6 @@ function generateLinkCard(url, metadata) {
   const footer = document.createElement("div");
   footer.className = "link-card__footer";
 
-  const title = document.createElement("p");
-  title.className = "link-card__title";
-  title.textContent = metadata.title;
-  footer.appendChild(title);
-
   if (metadata.favicon_url) {
     const favicon = document.createElement("img");
     favicon.className = "link-card__favicon";
@@ -65,6 +60,11 @@ function generateLinkCard(url, metadata) {
     favicon.alt = "";
     footer.appendChild(favicon);
   }
+
+  const title = document.createElement("p");
+  title.className = "link-card__title";
+  title.textContent = metadata.title;
+  footer.appendChild(title);
 
   cardContainer.appendChild(footer);
 

@@ -1,0 +1,53 @@
+section.create-form id="create_form" aria-labelledby="create_form_title"
+  .create-form__body data-controller="tag-list" data-action="submit->tag-list#convertToParams"
+    = form_with model: reference_archive, class: "form", data: { controller: "submit-toggle tag-suggestions" } do |f|
+      = render "form_errors", record: reference_archive
+      - @selected_tags.each do |tag_name|
+        = hidden_field_tag "tags[]", tag_name, id: nil
+      .form__row data-controller="clipboard"
+        .create-form__url-field
+          = f.text_field :url,
+            class: "form__input form__input--large",
+            placeholder: "URLをここにペースト",
+            aria: { label: "ブックマークしたい画像のURL" },
+            data: { submit_toggle_target: "url", clipboard_target: "input", action: "input->submit-toggle#toggle" }
+          button.create-form__paste-btn type="button" aria-label="クリップボードから貼り付け" data-action="clipboard#paste"
+            svg(
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            )
+              path d="M11 14h10"
+              path d="M16 4h2a2 2 0 0 1 2 2v1.344"
+              path d="m17 18 4-4-4-4"
+              path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 1.793-1.113"
+              rect x="8" y="2" width="8" height="4" rx="1"
+      .create-form__tag-group
+        .create-form__tag-row
+          label.create-form__tag-field
+            svg.create-form__tag-icon(
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            )
+              path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"
+              circle cx="7.5" cy="7.5" r="1.5"
+            = f.text_field :tag_list,
+              class: "create-form__tag-input",
+              placeholder: "タグをスペース(空白)で区切って入力",
+              aria: { label: "ブックマークにつけるタグ" },
+              data: { tag_list_target: "tagsInput", action: "focus->tag-suggestions#show" }
+          = f.submit "登録する", class: "btn create-form__submit", disabled: true, data: { submit_toggle_target: "submit" }
+      = render "tag_suggestions", tags: tags

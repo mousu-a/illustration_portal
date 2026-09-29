@@ -1,9 +1,10 @@
-.tag-filter-display
-  span.filter-label このタグで絞り込み中
-  .selected-tags
+section.tag-filter aria-label="絞り込み中のタグ"
+  span.tag-filter__label このタグで絞り込み中
+  ul.tag-filter__selected-tags
     - selected_tags.each do |tag_name|
-      = link_to tag_deselect_path(tag_name, current_selected_tags: selected_tags),
-        class: "selected-tag", data: { tag_name: tag_name } do
-        = "##{tag_name}"
-        span.remove-icon ×
-  = link_to "タグによる絞り込みを全解除", reference_archives_path, class: "clear-all-btn"
+      li
+        = link_to tag_deselect_path(tag_name, current_selected_tags: selected_tags),
+          class: "tag-filter__selected-tag", data: { tag_name: tag_name } do
+          = "##{tag_name}"
+          span.tag-filter__remove ×
+  = link_to "タグによる絞り込みを全解除", reference_archives_path, class: "tag-filter__clear"
