@@ -1,43 +1,95 @@
 - edit_target = edit_target_for(archive)
-li.tweet id=dom_id(archive) data-controller="tag-list edit-form link-card"
-  .tweet__body
-    .tweet__link-area
-      .tweet__header
-        a.tweet__remove[
-          href=reference_archive_path(archive)
-          data-turbo-method="delete"
-          data-turbo-confirm="ブックマークのピンを外しますか？（ブックマークを削除する）"
-        ] ブクマを外す
-      .tweet__text
+li.archive id=dom_id(archive) data-controller="tag-list edit-form link-card"
+  article.archive__body
+    .archive__link-area
+      header.archive__header
+        .archive-menu
+          button.archive-menu__trigger type="button" popovertarget=dom_id(archive, :menu) aria-label="メニュー"
+            svg(
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            )
+              circle cx="12" cy="5" r="1"
+              circle cx="12" cy="12" r="1"
+              circle cx="12" cy="19" r="1"
+          menu.archive-menu__panel.menu-panel popover="auto" id=dom_id(archive, :menu)
+            li
+              button.menu-item[
+                type="button"
+                popovertarget=dom_id(archive, :menu)
+                popovertargetaction="hide"
+                data-action="click->edit-form#toggle"
+              ]
+                svg(
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                )
+                  path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+                  path d="m15 5 4 4"
+                | タグを編集
+            li
+              a.menu-item.menu-item--danger[
+                href=reference_archive_path(archive)
+                data-turbo-method="delete"
+                data-turbo-confirm="ブックマークのピンを外しますか？（ブックマークを削除する）"
+              ]
+                svg(
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                )
+                  path d="M12 17v5"
+                  path d="M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89"
+                  path d="m2 2 20 20"
+                  path d="M9 9v1.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h11"
+                | ブクマを外す
+      .archive__text
         = link_to archive.url, archive.url,
-          class: "tweet__url", target: "_blank", rel: "noopener"
-    .tweet__tags-show data-edit-form-target="show"
-      .tweet__tags
-        .tweet__tags-list
-          - if archive.tags.present?
-            - archive.tags.each do |tag|
-              = link_to "##{tag.name}",
-                selected_tags_path(tag.name, current_selected_tags: @selected_tags),
-                class: "tag-pill", data: { tag_name: tag.name }
-          - else
-            p.tweet__tags-empty まだタグがついていません
-        button.tweet__edit-toggle type="button" data-action="click->edit-form#toggle"
-          | タグを編集
-    .tweet__edit.hidden[
+          class: "archive__url", target: "_blank", rel: "noopener"
+    - if archive.tags.present?
+      ul.archive__tags data-edit-form-target="show"
+        - archive.tags.each do |tag|
+          li
+            = link_to "##{tag.name}",
+              selected_tags_path(tag.name, current_selected_tags: @selected_tags),
+              class: "tag-pill", data: { tag_name: tag.name }
+    - else
+      p.archive__tags.archive__tags-empty data-edit-form-target="show" まだタグがついていません
+    .edit-form.hidden[
       data-edit-form-target="editForm"
       data-action="submit->tag-list#convertToParams"
     ]
-      = form_with model: edit_target, class: "composer__form" do |f|
+      = form_with model: edit_target, class: "form" do |f|
         = render "form_errors", record: edit_target
-        .composer__row
-          = f.label :url, "URL", class: "composer__label"
-          = f.text_field :url, class: "composer__input", value: edit_target.url
-        .composer__row
-          = f.label :tag_list, "タグ", class: "composer__label"
+        .form__row
+          = f.label :url, "URL", class: "form__label"
+          = f.text_field :url, class: "form__input", value: edit_target.url
+        .form__row
+          = f.label :tag_list, "タグ", class: "form__label"
           = f.text_field :tag_list,
-            class: "composer__input",
+            class: "form__input",
             value: edit_target.tags.map(&:name).join(" "),
             data: { tag_list_target: "tagsInput" }
-        .composer__actions
+        .form__actions
           = f.submit "更新する", class: "btn"
           button.btn type="button" data-action="click->edit-form#toggle" キャンセル

@@ -15,6 +15,34 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
+  test "#index サイドバーにアバター画像とログアウトボタンを表示する" do
+    get reference_archives_path
+
+    assert_response :success
+    assert_select ".sidebar .account-menu img[src=?]", @user.avatar_url
+    assert_select ".sidebar button", text: "ログアウト"
+  end
+
+  test "#index アバター画像が無い場合は名前の頭文字を表示する" do
+    @user.update_column(:avatar_url, nil)
+
+    get reference_archives_path
+
+    assert_response :success
+    assert_select ".sidebar .account-menu img", count: 0
+    assert_select ".sidebar .account-menu__avatar--initial", text: "T"
+  end
+
+  test "#index サイドバーにタグ検索ボックスとタグのサジェストを表示する" do
+    @user.reference_archives.create!(url: "https://example.com/suggest", tag_list: "illustration")
+
+    get reference_archives_path
+
+    assert_response :success
+    assert_select ".sidebar .sidebar__search"
+    assert_select ".tag-suggestions .tag-pill", text: "#illustration"
+  end
+
   test "index はブックマークが1件も無いとき空メッセージを表示する" do
     get reference_archives_path
 
@@ -29,6 +57,29 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match "ブックマークが見つからないようです", response.body
+  end
+
+  test "#index 登録フォームの上にタイトルを表示する" do
+    get reference_archives_path
+
+    assert_select "h1.reference-archives__title + .create-form"
+    assert_select "h1.reference-archives__title", text: "ブックマークを登録"
+  end
+
+  test "#index ページネーションを一覧の上と下に表示する" do
+    26.times { |i| @user.reference_archives.create!(url: "https://example.com/#{i}") }
+
+    get reference_archives_path
+
+    assert_select ".pagination-wrapper nav.pagination", count: 2
+  end
+
+  test "#destroy 成功時、上下のページネーションをまとめて置き換える" do
+    archive = @user.reference_archives.create!(url: "https://example.com/deleteme")
+
+    delete reference_archive_path(archive), as: :turbo_stream
+
+    assert_turbo_stream action: "replace", targets: ".pagination-wrapper"
   end
 
   test "index は自分のブックマークのみ表示する" do
@@ -82,7 +133,7 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
       },
       as: :turbo_stream
 
-    assert_no_turbo_stream action: "prepend", target: "timeline_list"
+    assert_no_turbo_stream action: "prepend", target: "archives_list"
     assert_turbo_stream action: "update", target: "flash"
     assert_match "保存しました（現在の絞り込み条件と一致しないため、この一覧には表示されていません）", response.body
   end
@@ -105,7 +156,7 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
         as: :turbo_stream
     end
 
-    assert_turbo_stream action: "prepend", target: "timeline_list"
+    assert_turbo_stream action: "prepend", target: "archives_list"
     assert_match "https://example.com/new", response.body
     assert_match "保存しました", response.body
   end
@@ -115,15 +166,15 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
       params: { reference_archive: { url: "https://example.com/first" } },
       as: :turbo_stream
 
-    assert_turbo_stream action: "remove", target: "timeline_empty"
-    assert_turbo_stream action: "prepend", target: "timeline_list"
+    assert_turbo_stream action: "remove", target: "archives_empty"
+    assert_turbo_stream action: "prepend", target: "archives_list"
     assert_match "https://example.com/first", response.body
   end
 
   test "create失敗時、formにエラー内容を表示する" do
     post reference_archives_path, params: { reference_archive: { url: "" } }, as: :turbo_stream
 
-    assert_turbo_stream status: :unprocessable_entity, action: "replace", target: "composer"
+    assert_turbo_stream status: :unprocessable_entity, action: "replace", target: "create_form"
     assert_match "form-errors", response.body
   end
 
@@ -214,7 +265,7 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
 
     delete reference_archive_path(archive), as: :turbo_stream
 
-    assert_turbo_stream action: "before", target: "timeline_list"
+    assert_turbo_stream action: "before", target: "archives_list"
     assert_match "ブックマークが見つからないようです", response.body
   end
 end

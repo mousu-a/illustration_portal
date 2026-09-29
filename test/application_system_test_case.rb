@@ -1,5 +1,7 @@
 require "test_helper"
 
+Capybara.enable_aria_label = true
+
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include LoginSupport::System
 

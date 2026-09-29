@@ -1,20 +1,40 @@
 - set_meta_tags title: "ブックマーク登録、一覧ページ"
 - set_meta_tags description: "保存したイラスト資料のブックマーク一覧。タグで絞り込んで、必要な資料をすぐに見つけられます。"
 
-.section.reference-archives[
-  data-controller="form-errors"
-  data-action="turbo:before-stream-render@document->form-errors#clearStaleErrors"
+main.reference-archives[
+  data-controller="form-errors sidebar"
+  data-action="turbo:before-stream-render@document->form-errors#clearStaleErrors
+    keydown.esc@window->sidebar#close
+    turbo:frame-load->sidebar#close"
 ]
-  .ra-container
-    = render "composer", reference_archive: @composer_reference_archive
+  button.sidebar-toggle type="button" aria-label="メニューを開く" data-action="sidebar#open"
+    svg(
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      aria-hidden="true"
+    )
+      line x1="4" y1="8" x2="20" y2="8"
+      line x1="4" y1="16" x2="14" y2="16"
+  .sidebar-backdrop data-action="click->sidebar#close"
 
-    = turbo_frame_tag "reference_archives_timeline", data: { turbo_action: "advance" } do
+  .reference-archives__container
+    h1.reference-archives__title id="create_form_title" ブックマークを登録
+    = render "create_form", reference_archive: @create_form_reference_archive, tags: @tags
+
+    = turbo_frame_tag "reference_archives_list", data: { turbo_action: "advance" } do
       - if @selected_tags.present?
         = render "selected_tags_display", selected_tags: @selected_tags
 
-      .ra-main-content
-        .timeline-section
-          #timeline_container
-            = render "timeline", reference_archives: @reference_archives
+      .reference-archives__main
+        section.archives-section aria-labelledby="archives_title"
+          h2.visually-hidden id="archives_title" ブックマーク一覧
+          = render "pagination", reference_archives: @reference_archives
+          #archives_container
+            = render "archives", reference_archives: @reference_archives
           = render "pagination", reference_archives: @reference_archives
         = render "sidebar", tags: @tags, selected_tags: @selected_tags

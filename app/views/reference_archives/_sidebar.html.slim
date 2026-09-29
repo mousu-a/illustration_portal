@@ -1,18 +1,72 @@
-.sidebar id="sidebar"
-  .sidebar__section
-    h3.sidebar__title タグでブクマを絞り込む
+aside.sidebar id="sidebar" aria-label="タグ一覧"
+  .sidebar__logo
+    = link_to "Illustration Portal", reference_archives_path, class: "site-header__logo", data: { turbo_frame: "_top" }
+    button.sidebar__close type="button" aria-label="メニューを閉じる" data-action="sidebar#close"
+      svg(
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      )
+        rect x="3.5" y="4.5" width="17" height="15" rx="3.5"
+        line x1="9.5" y1="4.5" x2="9.5" y2="19.5"
+  section.sidebar__section
+    h2.sidebar__title タグでブクマを絞り込む
+    label.sidebar__search-field
+      svg.sidebar__search-icon(
+        viewBox="0 0 24 24"
+        width="15"
+        height="15"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        aria-hidden="true"
+      )
+        circle cx="10.5" cy="10.5" r="6.5"
+        line x1="15.5" y1="15.5" x2="20" y2="20"
+      input.sidebar__search type="search" placeholder="タグを検索" aria-label="タグを検索"
+    / TODO タグ検索機能実装
     .sidebar__tags
       - if tags.present?
-        - tags.each do |tag|
-          = link_to "##{tag.name} (#{tag.count})",
-            selected_tags_path(tag.name, current_selected_tags: selected_tags),
-            class: "tag-pill sidebar__tag",
-            data: { tag_name: tag.name }
+        / TODO 五十音グループ分けを実装（「あ」固定と以下の「か」〜「は」はダミー）
+        section.sidebar__tag-group
+          h3.sidebar__tag-group-title あ
+          ul.sidebar__tag-group-list
+            - tags.each do |tag|
+              li
+                = link_to "##{tag.name} (#{tag.count})",
+                  selected_tags_path(tag.name, current_selected_tags: selected_tags),
+                  class: "tag-pill sidebar__tag",
+                  data: { tag_name: tag.name }
+        section.sidebar__tag-group
+          h3.sidebar__tag-group-title か
+          ul.sidebar__tag-group-list
+            li: span.tag-pill.sidebar__tag #カメラ目線 (3)
+            li: span.tag-pill.sidebar__tag #顔 (5)
+        section.sidebar__tag-group
+          h3.sidebar__tag-group-title さ
+          ul.sidebar__tag-group-list
+            li: span.tag-pill.sidebar__tag #座り (2)
+            li: span.tag-pill.sidebar__tag #シルエット (1)
+        section.sidebar__tag-group
+          h3.sidebar__tag-group-title た
+          ul.sidebar__tag-group-list
+            li: span.tag-pill.sidebar__tag #立ち (4)
+            li: span.tag-pill.sidebar__tag #手 (6)
+        section.sidebar__tag-group
+          h3.sidebar__tag-group-title は
+          ul.sidebar__tag-group-list
+            li: span.tag-pill.sidebar__tag #背景 (8)
+            li: span.tag-pill.sidebar__tag #ポーズ (2)
       - else
         p.sidebar__empty まだタグがありません
-
-  / TODO：へッダー作ったら位置調整
-  .sidebar__section
-    = button_to "ログアウト", logout_path, method: :delete, form: { data: { turbo_frame: "_top" } }
-    = button_to "退会する", user_path(current_user), method: :delete,
-      form: { data: { turbo_frame: "_top", turbo_confirm: "退会するとブックマークもすべて削除されます。よろしいですか？" } }
+    - if tags.present?
+      / TODO もっと見る機能実装
+      button.sidebar__more type="button" もっと見る
+  footer.sidebar__footer
+    = render "layouts/account_menu"
