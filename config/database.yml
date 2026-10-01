@@ -89,6 +89,7 @@ production:
     <<: *default
     database: illustration_portal_production
     username: illustration_portal
+    host: <%= ENV["DB_HOST"] %>
     password: <%= ENV["ILLUSTRATION_PORTAL_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
