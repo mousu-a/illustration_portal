@@ -46,4 +46,21 @@ class ReferenceArchivesHelperTest < ActionView::TestCase
 
     assert_equal reference_archives_path, result
   end
+
+  test "#sort_for_suggestions タグを使用数の多い順、同数なら名前順に並べて返す" do
+    user = users(:tanaka)
+    user.reference_archives.create!(url: "https://example.com/1", tag_list: "イラスト, ポーズ, ラフ")
+    user.reference_archives.create!(url: "https://example.com/2", tag_list: "イラスト")
+
+    tags = user.reference_archives.tag_counts_on(:tags)
+    result = sort_for_suggestions(tags)
+
+    assert_equal [ "イラスト", "ポーズ", "ラフ" ], result.map(&:name)
+  end
+
+  test "#sort_for_suggestions タグが無い場合は空配列を返す" do
+    tags = users(:tanaka).reference_archives.tag_counts_on(:tags)
+
+    assert_equal [], sort_for_suggestions(tags)
+  end
 end
