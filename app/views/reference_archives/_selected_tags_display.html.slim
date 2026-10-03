@@ -1,5 +1,5 @@
 section.tag-filter aria-label="絞り込み中のタグ"
-  span.tag-filter__label このタグで絞り込み中
+  span.tag-filter__label タグで絞り込み中
   ul.tag-filter__selected-tags
     - selected_tags.each do |tag_name|
       li
@@ -7,4 +7,4 @@ section.tag-filter aria-label="絞り込み中のタグ"
           class: "tag-filter__selected-tag", data: { tag_name: tag_name } do
           = "##{tag_name}"
           span.tag-filter__remove ×
-  = link_to "タグによる絞り込みを全解除", reference_archives_path, class: "tag-filter__clear"
+  = link_to "タグの絞り込みをクリア", reference_archives_path, class: "tag-filter__clear"

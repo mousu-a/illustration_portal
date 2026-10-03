@@ -154,7 +154,7 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_text both.url
     assert_no_text unrelated.url
 
-    click_on "タグによる絞り込みを全解除"
+    click_on "タグの絞り込みをクリア"
 
     assert_no_selector ".tag-filter"
     assert_current_path reference_archives_path
