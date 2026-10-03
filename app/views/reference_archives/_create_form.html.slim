@@ -48,6 +48,6 @@ section.create-form id="create_form" aria-labelledby="create_form_title"
               class: "create-form__tag-input",
               placeholder: "タグをスペース(空白)で区切って入力",
               aria: { label: "ブックマークにつけるタグ" },
-              data: { tag_list_target: "tagsInput", action: "focus->tag-suggestions#show" }
+              data: { tag_list_target: "tagsInput", tag_suggestions_target: "input", action: "focus->tag-suggestions#show input->tag-suggestions#suggest" }
           = f.submit "登録する", class: "btn create-form__submit", disabled: true, data: { submit_toggle_target: "submit" }
       = render "tag_suggestions", tags: tags

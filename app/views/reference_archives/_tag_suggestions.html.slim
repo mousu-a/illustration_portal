@@ -1,6 +1,10 @@
 - if tags.present?
-  section.tag-suggestions aria-label="タグのサジェスト" hidden=true data-tag-suggestions-target="content"
+  section.tag-suggestions aria-label="タグのサジェスト" hidden=true data-tag-suggestions-target="tagSuggestions"
     p.tag-suggestions__label タグのサジェスト
-    / TODO クリックでタグ入力欄に追加する機能を実装
-    - tags.first(8).each do |tag|
-      button.tag-pill type="button" = "##{tag.name}"
+    - sort_for_suggestions(tags).each do |tag|
+      button.tag-label(
+        type="button"
+        data-tag-name=tag.name
+        data-tag-suggestions-target="tag"
+        data-action="click->tag-suggestions#completeInput"
+      ) = "##{tag.name}"

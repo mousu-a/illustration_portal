@@ -16,4 +16,8 @@ module ReferenceArchivesHelper
     remaining_tags = current_selected_tags - [ remove_tag ]
     remaining_tags.present? ? reference_archives_path(tags: remaining_tags) : reference_archives_path
   end
+
+  def sort_for_suggestions(tags)
+    tags.sort_by { |tag| [ -tag.count, tag.name ] }
+  end
 end

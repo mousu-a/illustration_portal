@@ -14,7 +14,7 @@ aside.sidebar id="sidebar" aria-label="タグ一覧"
       )
         rect x="3.5" y="4.5" width="17" height="15" rx="3.5"
         line x1="9.5" y1="4.5" x2="9.5" y2="19.5"
-  section.sidebar__section
+  section.sidebar__section data-controller="tag-search"
     h2.sidebar__title タグでブクマを絞り込む
     label.sidebar__search-field
       svg.sidebar__search-icon(
@@ -29,8 +29,7 @@ aside.sidebar id="sidebar" aria-label="タグ一覧"
       )
         circle cx="10.5" cy="10.5" r="6.5"
         line x1="15.5" y1="15.5" x2="20" y2="20"
-      input.sidebar__search type="search" placeholder="タグを検索" aria-label="タグを検索"
-    / TODO タグ検索機能実装
+      input.sidebar__search type="search" placeholder="タグを検索" aria-label="タグを検索" data-tag-search-target="input" data-action="input->tag-search#search"
     .sidebar__tags
       - if tags.present?
         / TODO 五十音グループ分けを実装（「あ」固定と以下の「か」〜「は」はダミー）
@@ -38,31 +37,31 @@ aside.sidebar id="sidebar" aria-label="タグ一覧"
           h3.sidebar__tag-group-title あ
           ul.sidebar__tag-group-list
             - tags.each do |tag|
-              li
+              li data-tag-search-target="tag" data-tag-search-name=tag.name
                 = link_to "##{tag.name} (#{tag.count})",
                   selected_tags_path(tag.name, current_selected_tags: selected_tags),
-                  class: "tag-pill sidebar__tag",
+                  class: "tag-label sidebar__tag",
                   data: { tag_name: tag.name }
         section.sidebar__tag-group
           h3.sidebar__tag-group-title か
           ul.sidebar__tag-group-list
-            li: span.tag-pill.sidebar__tag #カメラ目線 (3)
-            li: span.tag-pill.sidebar__tag #顔 (5)
+            li: span.tag-label.sidebar__tag #カメラ目線 (3)
+            li: span.tag-label.sidebar__tag #顔 (5)
         section.sidebar__tag-group
           h3.sidebar__tag-group-title さ
           ul.sidebar__tag-group-list
-            li: span.tag-pill.sidebar__tag #座り (2)
-            li: span.tag-pill.sidebar__tag #シルエット (1)
+            li: span.tag-label.sidebar__tag #座り (2)
+            li: span.tag-label.sidebar__tag #シルエット (1)
         section.sidebar__tag-group
           h3.sidebar__tag-group-title た
           ul.sidebar__tag-group-list
-            li: span.tag-pill.sidebar__tag #立ち (4)
-            li: span.tag-pill.sidebar__tag #手 (6)
+            li: span.tag-label.sidebar__tag #立ち (4)
+            li: span.tag-label.sidebar__tag #手 (6)
         section.sidebar__tag-group
           h3.sidebar__tag-group-title は
           ul.sidebar__tag-group-list
-            li: span.tag-pill.sidebar__tag #背景 (8)
-            li: span.tag-pill.sidebar__tag #ポーズ (2)
+            li: span.tag-label.sidebar__tag #背景 (8)
+            li: span.tag-label.sidebar__tag #ポーズ (2)
       - else
         p.sidebar__empty まだタグがありません
     - if tags.present?

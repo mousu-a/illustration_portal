@@ -72,7 +72,7 @@ li.archive id=dom_id(archive) data-controller="tag-list edit-form link-card"
           li
             = link_to "##{tag.name}",
               selected_tags_path(tag.name, current_selected_tags: @selected_tags),
-              class: "tag-pill", data: { tag_name: tag.name }
+              class: "tag-label", data: { tag_name: tag.name }
     - else
       p.archive__tags.archive__tags-empty data-edit-form-target="show" まだタグがついていません
     .edit-form.hidden[

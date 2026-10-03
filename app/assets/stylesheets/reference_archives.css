@@ -54,7 +54,7 @@ button,input{ font-family:inherit; }
 .btn:active{ transform:translateY(1px); }
 .btn:disabled{ opacity:.55; cursor:not-allowed; }
 
-.tag-pill{
+.tag-label{
   appearance:none; -webkit-appearance:none;
   font-size:12px;
   color:var(--sub);
@@ -66,7 +66,7 @@ button,input{ font-family:inherit; }
   cursor:pointer;
   transition:color .15s ease;
 }
-.tag-pill:hover{
+.tag-label:hover{
   color:var(--accent);
   text-decoration:underline;
 }
@@ -199,7 +199,7 @@ turbo-frame#reference_archives_list{
   border-radius:var(--radius);
   box-shadow:var(--shadow);
   padding:16px 12px;
-  margin-bottom:66px;
+  margin-bottom:22px;
 }
 
 .create-form__body{ display:flex; flex-direction:column; gap:10px; }
@@ -337,7 +337,7 @@ turbo-frame#reference_archives_list{
   font-weight:600;
   color:var(--sub);
 }
-.tag-suggestions .tag-pill{
+.tag-suggestions .tag-label{
   font-size:14px;
   color:var(--accent);
 }
@@ -390,8 +390,8 @@ turbo-frame#reference_archives_list{
   align-items:center;
   gap:6px;
   font-size:13px;
-  color:#fff;
-  background:var(--accent);
+  color:var(--accent);
+  background:transparent;
   border:1px solid var(--accent);
   padding:6px 12px;
   border-radius:999px;
@@ -402,7 +402,7 @@ turbo-frame#reference_archives_list{
 }
 
 .tag-filter__selected-tag:hover{
-  background:var(--accent-2);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
   transform:translateY(-1px);
 }
 
