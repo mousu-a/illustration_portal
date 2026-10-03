@@ -40,7 +40,7 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".sidebar .sidebar__search"
-    assert_select ".tag-suggestions .tag-pill", text: "#illustration"
+    assert_select ".tag-suggestions .tag-label", text: "#illustration"
   end
 
   test "index はブックマークが1件も無いとき空メッセージを表示する" do
