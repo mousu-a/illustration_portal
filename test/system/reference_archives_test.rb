@@ -38,6 +38,14 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_button "登録する", disabled: false
   end
 
+  test "URLを入力すると元サイトでのいいねやリツイート（評価）をリマインドする" do
+    visit reference_archives_path
+    assert_no_text "いいねやリツイート（評価）も忘れずに！"
+
+    fill_in "ブックマークしたい画像のURL", with: "https://example.com/reminder"
+    assert_text "いいねやリツイート（評価）も忘れずに！"
+  end
+
   test "ペーストボタンを押すとクリップボードの内容がURL欄に入る" do
     visit reference_archives_path
     page.execute_script("navigator.clipboard.readText = () => Promise.resolve('https://example.com/pasted')")

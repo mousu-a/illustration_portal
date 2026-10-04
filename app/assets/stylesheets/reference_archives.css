@@ -342,6 +342,19 @@ turbo-frame#reference_archives_list{
   color:var(--accent);
 }
 
+.rating-reminder{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin:0 0 0 12px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--accent);
+  animation:tag-suggestions-fade-in .2s ease;
+}
+.rating-reminder[hidden]{ display:none; }
+.rating-reminder__icon{ flex-shrink:0; }
+
 /* フォームバリデーションエラー */
 .form-errors{
   margin:0;
