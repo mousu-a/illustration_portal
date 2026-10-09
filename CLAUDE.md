@@ -32,3 +32,15 @@ PR作成時、descriptionは以下の形式に沿うようにする。
 
 closes #4565（これは例にしている Issue の番号）
 ```
+
+# スケジュールタスクの自動実行ルール
+
+Desktop Scheduled Task「毎日の自動開発タスク」実行中は、以下を自動で行うことが許可されています：
+
+- ブランチ作成（`git switch -c feature/...`）
+- commit & push
+- PR作成
+- CI失敗時の修正とpush
+- レビューコメントへの対応とpush
+
+**実行時間**: 毎日9:00〜14:00（14時までに終わらない場合は`docs/todo.md`に進捗を記録）
