@@ -1,4 +1,6 @@
 class API::MetadataController < ApplicationController
+  before_action :require_login
+
   def index
     metadata = LinkCard.fetch_metadata(params[:url])
 
