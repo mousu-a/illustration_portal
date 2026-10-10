@@ -5,8 +5,16 @@ require "nokogiri"
 class LinkCard
   HTTP_OPTIONS = { open_timeout: 3, read_timeout: 5 }.freeze
 
+  CACHE_EXPIRES_IN = 7.days
+
   def self.fetch_metadata(url)
-    new(url).fetch_metadata
+    return nil if url.blank?
+
+    cache_key = "link_card:#{Digest::SHA256.hexdigest(url)}"
+
+    Rails.cache.fetch(cache_key, expires_in: CACHE_EXPIRES_IN, skip_nil: true) do
+      new(url).fetch_metadata
+    end
   end
 
   def initialize(url)
