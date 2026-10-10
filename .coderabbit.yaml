@@ -1,15 +1,40 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
 language: "ja-JP"
+
 reviews:
+  profile: "chill"
+
+  request_changes_workflow: false
+
   path_instructions:
     - path: "**/*.rb"
       instructions: |-
-        # refactoring
+        # Refactoring
         - まずFat Controllerを避け、次にFat Modelを避ける。
+
         # Unit Test
         - model, helper, decorator, view_componentについてはメソッドを追加した場合は必ず対応したUnit TestのTestCaseを1つは書く。
+
     - path: "test/**/*"
       instructions: |-
         # Test
         - system testは極力書かず、model test・request testなど他のテストで検証できるものはそちらで対応する。system testはユーザー動線の確認に限定する。
         - どうしても避けられない時以外にsystem testでsleepは使わない。
+
+tone_instructions: |-
+  ## レビュー方針
+
+  マージする内容を変更する必要がある問題だけを指摘してください。
+  バグ、プロジェクトの明確なルール違反、実際に存在するリスクを優先してください。
+
+  ## 指摘対象外
+
+  - すでにRuboCopなどのLinterで検出できる問題は指摘しない
+  - 褒めるコメント、変更内容の言い換え、スタイル上の細かい指摘、絵文字は不要
+  - 単なる好みによる指摘は不要
+  - コードから具体的な根拠を確認できない、推測に基づく問題は指摘しない
+
+  ## 説明スタイル
+
+  最大3文で簡潔に説明してください。
