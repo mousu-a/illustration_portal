@@ -16,6 +16,37 @@ class LinkCardTest < ActiveSupport::TestCase
     mock_instance.verify
   end
 
+  test ".fetch_metadata 同じURLの2回目以降はキャッシュした結果を返す" do
+    expected = { title: "リンクカードタイトル" }
+    mock_instance = Minitest::Mock.new
+    mock_instance.expect(:fetch_metadata, expected)
+
+    with_memory_cache do
+      LinkCard.stub(:new, mock_instance) do
+        2.times { assert_equal expected, LinkCard.fetch_metadata("https://example.com/article") }
+      end
+    end
+
+    mock_instance.verify
+  end
+
+  test ".fetch_metadata 取得に失敗した場合、結果をキャッシュしない" do
+    mock_instance = Minitest::Mock.new
+    2.times { mock_instance.expect(:fetch_metadata, nil) }
+
+    with_memory_cache do
+      LinkCard.stub(:new, mock_instance) do
+        2.times { assert_nil LinkCard.fetch_metadata("https://example.com/broken") }
+      end
+    end
+
+    mock_instance.verify
+  end
+
+  test ".fetch_metadata urlが空の場合、nilを返す" do
+    assert_nil LinkCard.fetch_metadata(nil)
+  end
+
   test "#fetch_metadata metadataをHashで返す" do
     html = <<~HTML
       <html><head>
@@ -74,5 +105,15 @@ class LinkCardTest < ActiveSupport::TestCase
     result = LinkCard.new(unsafe_url).fetch_metadata
 
     assert_nil result
+  end
+
+  private
+
+  def with_memory_cache
+    original_cache = Rails.cache
+    Rails.cache = ActiveSupport::Cache::MemoryStore.new
+    yield
+  ensure
+    Rails.cache = original_cache
   end
 end
