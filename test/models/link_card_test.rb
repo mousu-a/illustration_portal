@@ -16,6 +16,35 @@ class LinkCardTest < ActiveSupport::TestCase
     mock_instance.verify
   end
 
+  test ".fetch_metadata 取得した結果をキャッシュに保存する" do
+    url = "https://example.com/article"
+    expected = { title: "リンクカードタイトル" }
+    mock_instance = Minitest::Mock.new
+    mock_instance.expect(:fetch_metadata, expected)
+
+    Rails.stub(:cache, ActiveSupport::Cache::MemoryStore.new) do
+      LinkCard.stub(:new, mock_instance) do
+        LinkCard.fetch_metadata(url)
+      end
+
+      assert_equal expected, Rails.cache.read("link_card:#{url}")
+    end
+  end
+
+  test ".fetch_metadata 取得に失敗した場合、結果をキャッシュしない" do
+    url = "https://example.com/broken"
+    mock_instance = Minitest::Mock.new
+    mock_instance.expect(:fetch_metadata, nil)
+
+    Rails.stub(:cache, ActiveSupport::Cache::MemoryStore.new) do
+      LinkCard.stub(:new, mock_instance) do
+        LinkCard.fetch_metadata(url)
+      end
+
+      assert_not Rails.cache.exist?("link_card:#{url}")
+    end
+  end
+
   test "#fetch_metadata metadataをHashで返す" do
     html = <<~HTML
       <html><head>
@@ -56,6 +85,10 @@ class LinkCardTest < ActiveSupport::TestCase
     end
 
     assert_equal expected, result[:favicon_url]
+  end
+
+  test "#fetch_metadata urlが空の場合、nilを返す" do
+    assert_nil LinkCard.fetch_metadata(nil)
   end
 
   test "#fetch_metadata OGPが存在しない場合、nilを返す" do

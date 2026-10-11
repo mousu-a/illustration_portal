@@ -1,6 +1,18 @@
 require "test_helper"
 
 class API::MetadataTest < ActionDispatch::IntegrationTest
+  setup do
+    login(users(:tanaka))
+  end
+
+  test "GET /api/metadata 未ログインの場合はトップページへリダイレクトする" do
+    delete logout_path
+
+    get api_metadata_path, params: { url: "https://example.com/article" }
+
+    assert_redirected_to root_path
+  end
+
   test "GET /api/metadata リクエストが成功するとmetadataを返す" do
     expected = {
       title: "リンクカードタイトル",
