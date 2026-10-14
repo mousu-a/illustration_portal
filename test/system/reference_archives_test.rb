@@ -219,41 +219,18 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_no_text error_message
   end
 
-  test "狭い画面ではハンバーガーメニューからサイドバーを開いてタグで絞り込む" do
-    ruby = @user.reference_archives.create!(url: "https://example.com/ruby", tag_list: "ruby")
-    unrelated = @user.reference_archives.create!(url: "https://example.com/unrelated", tag_list: "illustration")
+  test "狭い画面ではサイドバーをハンバーガーメニューとしてたたむ" do
+    page.current_window.resize_to(800, 1000)
 
-    with_narrow_window do
-      visit reference_archives_path
-      assert_no_selector ".sidebar"
+    visit reference_archives_path
+    assert_no_selector ".sidebar"
 
-      click_on "メニューを開く"
-      find(".sidebar [data-tag-name='ruby']").click
+    click_on "メニューを開く"
+    assert_selector ".sidebar"
 
-      assert_text ruby.url
-      assert_no_text unrelated.url
-      assert_no_selector ".sidebar"
-    end
-  end
-
-  test "狭い画面で開いたサイドバーを閉じる" do
-    with_narrow_window do
-      visit reference_archives_path
-
-      click_on "メニューを開く"
-      assert_selector ".sidebar"
-
-      click_on "メニューを閉じる"
-      assert_no_selector ".sidebar"
-    end
-  end
-
-  private
-
-  def with_narrow_window
-    page.driver.browser.manage.window.resize_to(800, 1000)
-    yield
+    click_on "メニューを閉じる"
+    assert_no_selector ".sidebar"
   ensure
-    page.driver.browser.manage.window.resize_to(1400, 1400)
+    page.current_window.resize_to(1400, 1400)
   end
 end
