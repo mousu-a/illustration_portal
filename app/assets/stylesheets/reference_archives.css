@@ -560,6 +560,13 @@ turbo-frame#reference_archives_list{
   overflow-y:auto;
 }
 
+.sidebar__tag-groups{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.sidebar__tag-groups[hidden]{ display:none; }
+
 .sidebar__tag-group{
   display:flex;
   flex-direction:column;
@@ -568,12 +575,15 @@ turbo-frame#reference_archives_list{
   border-bottom:1px solid var(--line);
 }
 
-.sidebar__tag-group-title{
+.sidebar__tag-group-title,
+.sidebar__search-results-title{
   margin:0;
   font-size:12px;
   font-weight:700;
   color:var(--text);
 }
+
+.sidebar__search-results-title{ margin-bottom:6px; }
 
 .sidebar__tag-group-list{
   list-style:none;
@@ -586,27 +596,17 @@ turbo-frame#reference_archives_list{
 
 .sidebar__tag{ font-size:13px; }
 
-.sidebar__more{
-  appearance:none; -webkit-appearance:none;
-  align-self:flex-start;
-  background:transparent;
-  border:none;
-  padding:0;
-  font-size:13px;
-  font-weight:600;
-  color:var(--accent);
-  cursor:pointer;
-  border-bottom:1px solid transparent;
-  transition:border-color .15s ease;
-}
-.sidebar__more:hover{ border-color:var(--accent); }
-
 .sidebar__empty{
   font-size:13px;
   color:var(--sub);
   text-align:center;
   padding:20px 0;
   margin:0;
+}
+
+.sidebar__tag-group .sidebar__empty{
+  text-align:left;
+  padding:0;
 }
 
 .sidebar__close,

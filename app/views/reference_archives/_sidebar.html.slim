@@ -14,7 +14,7 @@ aside.sidebar id="sidebar" aria-label="タグ一覧"
       )
         rect x="3.5" y="4.5" width="17" height="15" rx="3.5"
         line x1="9.5" y1="4.5" x2="9.5" y2="19.5"
-  section.sidebar__section data-controller="tag-search"
+  section.sidebar__section data-controller="tag-search view-switch" data-action="tag-search:search->view-switch#searching"
     h2.sidebar__title タグでブクマを絞り込む
     label.sidebar__search-field
       svg.sidebar__search-icon(
@@ -32,40 +32,24 @@ aside.sidebar id="sidebar" aria-label="タグ一覧"
       input.sidebar__search type="search" placeholder="タグを検索" aria-label="タグを検索" data-tag-search-target="input" data-action="input->tag-search#search"
     .sidebar__tags
       - if tags.present?
-        / TODO 五十音グループ分けを実装（「あ」固定と以下の「か」〜「は」はダミー）
-        section.sidebar__tag-group
-          h3.sidebar__tag-group-title あ
+        .sidebar__tag-groups data-view-switch-target="kanaSections"
+          - group_tags_by_kana(tags).each do |kana_row, row_tags|
+            section.sidebar__tag-group
+              h3.sidebar__tag-group-title = kana_row
+              - if row_tags.present?
+                ul.sidebar__tag-group-list
+                  - row_tags.each do |tag|
+                    li = render "sidebar_tag", tag:, selected_tags:
+              - else
+                p.sidebar__empty まだタグがありません
+        .sidebar__search-results data-view-switch-target="resultsSection" hidden=true
+          h3.sidebar__search-results-title data-tag-search-target="matchLabel" ヒットしたタグ
           ul.sidebar__tag-group-list
-            - tags.each do |tag|
+            - sort_for_suggestions(tags).each do |tag|
               li data-tag-search-target="tag" data-tag-search-name=tag.name
-                = link_to "##{tag.name} (#{tag.count})",
-                  selected_tags_path(tag.name, current_selected_tags: selected_tags),
-                  class: "tag-label sidebar__tag",
-                  data: { tag_name: tag.name }
-        section.sidebar__tag-group
-          h3.sidebar__tag-group-title か
-          ul.sidebar__tag-group-list
-            li: span.tag-label.sidebar__tag #カメラ目線 (3)
-            li: span.tag-label.sidebar__tag #顔 (5)
-        section.sidebar__tag-group
-          h3.sidebar__tag-group-title さ
-          ul.sidebar__tag-group-list
-            li: span.tag-label.sidebar__tag #座り (2)
-            li: span.tag-label.sidebar__tag #シルエット (1)
-        section.sidebar__tag-group
-          h3.sidebar__tag-group-title た
-          ul.sidebar__tag-group-list
-            li: span.tag-label.sidebar__tag #立ち (4)
-            li: span.tag-label.sidebar__tag #手 (6)
-        section.sidebar__tag-group
-          h3.sidebar__tag-group-title は
-          ul.sidebar__tag-group-list
-            li: span.tag-label.sidebar__tag #背景 (8)
-            li: span.tag-label.sidebar__tag #ポーズ (2)
+                = render "sidebar_tag", tag:, selected_tags:
+          p.sidebar__empty data-tag-search-target="emptyLabel" hidden=true ヒットするタグがありませんでした
       - else
         p.sidebar__empty まだタグがありません
-    - if tags.present?
-      / TODO もっと見る機能実装
-      button.sidebar__more type="button" もっと見る
   footer.sidebar__footer
     = render "layouts/account_menu"

@@ -1,0 +1,4 @@
+= link_to "##{tag.name} (#{tag.count})",
+  selected_tags_path(tag.name, current_selected_tags: selected_tags),
+  class: "tag-label sidebar__tag",
+  data: { tag_name: tag.name }
