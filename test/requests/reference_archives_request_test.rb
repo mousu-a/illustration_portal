@@ -43,6 +43,20 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
     assert_select ".tag-suggestions .tag-label", text: "#illustration"
   end
 
+  test "#index サイドバーのタグを五十音の行ごとにグループ分けして表示する" do
+    tag_names = [ "あお", "カメラ", "ruby" ]
+    @user.reference_archives.create!(url: "https://example.com/kana", tag_list: tag_names)
+    group_count = 11
+    empty_group_count = group_count - tag_names.count
+
+    get reference_archives_path
+
+    assert_response :success
+    assert_select ".sidebar__tag-group-title", count: group_count
+    assert_select ".sidebar__tag-group .sidebar__tag", count: tag_names.count
+    assert_select ".sidebar__tag-group .sidebar__empty", text: "まだタグがありません", count: empty_group_count
+  end
+
   test "index はブックマークが1件も無いとき空メッセージを表示する" do
     get reference_archives_path
 

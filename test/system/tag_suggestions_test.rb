@@ -46,9 +46,33 @@ class TagSuggestionsTest < ApplicationSystemTestCase
     assert_selector ".sidebar [data-tag-name='ラフ']"
   end
 
-  test "タグ検索は一致しなければタグを表示しない" do
+  test "タグ検索中は五十音グループの表示を隠し、ヒットしたタグを保存数の多い順に表示する 検索バーが空になると五十音表示に戻る" do
+    user = users(:tanaka)
+    2.times { |i| user.reference_archives.create!(url: "https://example.com/sketch-#{i}", tag_list: "sketch") }
+    user.reference_archives.create!(url: "https://example.com/asketch", tag_list: "asketch")
+
+    visit reference_archives_path
+    fill_in "タグを検索", with: "sketch"
+
+    assert_text "ヒットしたタグ"
+    result_tags = all(".sidebar__search-results [data-tag-name]")
+    assert_equal "#sketch (2)", result_tags[0].text
+    assert_equal "#asketch (1)", result_tags[1].text
+    assert_no_selector ".sidebar__tag-group-title"
+
+    fill_in "タグを検索", with: ""
+
+    assert_selector ".sidebar__tag-group-title"
+    assert_no_text "ヒットしたタグ"
+  end
+
+  test "タグ検索は一致しなければ「ヒットするタグがありませんでした」を表示する" do
+    assert_no_text "ヒットするタグがありませんでした"
+
     fill_in "タグを検索", with: "zzz"
 
     assert_no_selector ".sidebar [data-tag-name]"
+    assert_text "ヒットするタグがありませんでした"
+    assert_no_text "ヒットしたタグ"
   end
 end

@@ -63,4 +63,51 @@ class ReferenceArchivesHelperTest < ActionView::TestCase
 
     assert_equal [], sort_for_suggestions(tags)
   end
+
+  test "#group_tags_by_kana 先頭の仮名（あかさたな〜わ、その他）でグループ化したハッシュを返す" do
+    tags = [ "かめら", "ガーデン", "あお", "ポーズ", "ぱん" ].map { |name| ActsAsTaggableOn::Tag.new(name: name) }
+    result = group_tags_by_kana(tags)
+
+    assert_equal [ "あ", "か", "さ", "た", "な", "は", "ま", "や", "ら", "わ", "その他" ], result.keys
+    assert_equal [ "あお" ], result["あ"].map(&:name)
+    assert_equal [ "かめら", "ガーデン" ], result["か"].map(&:name)
+    assert_equal [ "ぱん", "ポーズ" ], result["は"].map(&:name)
+  end
+
+  test "#group_tags_by_kana まだタグが無い行は空配列を返す" do
+    tags = [ "あお" ].map { |name| ActsAsTaggableOn::Tag.new(name: name) }
+    result = group_tags_by_kana(tags)
+
+    assert_equal [ "あ", "か", "さ", "た", "な", "は", "ま", "や", "ら", "わ", "その他" ], result.keys
+    assert_equal [ "あお" ], result["あ"].map(&:name)
+    assert_equal [], result["さ"]
+  end
+
+  test "#group_tags_by_kana 小書き文字は通常の文字として扱う" do
+    tags = [ "ヵ", "ヶ" ].map { |name| ActsAsTaggableOn::Tag.new(name: name) }
+    result = group_tags_by_kana(tags)
+
+    assert_equal [ "ヵ", "ヶ" ], result["か"].map(&:name)
+  end
+
+  test "#group_tags_by_kana 漢字・英数字は「その他」にまとめる" do
+    tags = [ "ruby", "あお", "顔" ].map { |name| ActsAsTaggableOn::Tag.new(name: name) }
+    result = group_tags_by_kana(tags)
+
+    assert_equal [ "ruby", "顔" ], result["その他"].map(&:name)
+  end
+
+  test "#kana_row_of 先頭の文字が属する仮名を返す" do
+    assert_equal "あ", kana_row_of("あお")
+    assert_equal "か", kana_row_of("カメラ")
+    assert_equal "か", kana_row_of("ガーデン")
+    assert_equal "は", kana_row_of("ぱん")
+    assert_equal "は", kana_row_of("ﾎﾟｰｽﾞ")
+    assert_equal "わ", kana_row_of("ゎああ")
+  end
+
+  test "#kana_row_of 漢字・英数字は「その他」として扱う" do
+    assert_equal "その他", kana_row_of("ruby")
+    assert_equal "その他", kana_row_of("顔")
+  end
 end
