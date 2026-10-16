@@ -38,8 +38,8 @@ export default class extends Controller {
   completeInput(e) {
     const inputWords = this.inputTarget.value.split(/\s+/);
     const selectedWord = e.currentTarget.dataset.tagName;
-    const targetIndex = inputWords.length - 1
-    inputWords[targetIndex] = selectedWord
+    const targetIndex = inputWords.length - 1;
+    inputWords[targetIndex] = selectedWord;
 
     const completedInput = inputWords.join(" ");
     this.inputTarget.value = completedInput + " ";
