@@ -121,12 +121,12 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
 
     visit reference_archives_path
 
-    find(".sidebar [data-tag-name='ruby']").click
+    find(".sidebar__tag", text: "#ruby").click
     assert_text both.url
     assert_text ruby_only.url
     assert_no_text unrelated.url
 
-    find(".sidebar [data-tag-name='rails']").click
+    find(".sidebar__tag", text: "#rails").click
     assert_text both.url
     assert_no_text ruby_only.url
     assert_no_text unrelated.url
@@ -141,12 +141,12 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     visit reference_archives_path(tags: [ "ruby", "rails" ])
 
     within ".tag-filter" do
-      find("[data-tag-name='rails']").click
+      find(".tag-filter__selected-tag", text: "#rails").click
     end
     assert_current_path reference_archives_path(tags: [ "ruby" ])
 
     within ".tag-filter" do
-      find("[data-tag-name='ruby']").click
+      find(".tag-filter__selected-tag", text: "#ruby").click
     end
     assert_no_selector ".tag-filter"
     assert_current_path reference_archives_path
@@ -176,7 +176,7 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
 
     fill_in "ブックマークしたい画像のURL", with: "https://example.com/not-submitted-yet"
 
-    find(".sidebar [data-tag-name='ruby']").click
+    find(".sidebar__tag", text: "#ruby").click
 
     assert_current_path reference_archives_path(tags: [ "ruby" ])
     assert_field "ブックマークしたい画像のURL", with: "https://example.com/not-submitted-yet"
