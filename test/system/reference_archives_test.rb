@@ -114,24 +114,53 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_no_text "https://example.com/before"
   end
 
-  test "タグによりブックマークを絞り込む(AND)" do
-    both = @user.reference_archives.create!(url: "https://example.com/both", tag_list: "ruby, rails")
-    ruby_only = @user.reference_archives.create!(url: "https://example.com/ruby-only", tag_list: "ruby")
-    unrelated = @user.reference_archives.create!(url: "https://example.com/unrelated", tag_list: "illustration")
+  test "タグをクリックすると、絞り込むタグを切り替えられる" do
+    has_tag_a = @user.reference_archives.create!(url: "https://example.com/has-tag-a", tag_list: "tag_a")
+    has_tag_b = @user.reference_archives.create!(url: "https://example.com/has-tag-b", tag_list: "tag_b")
 
     visit reference_archives_path
 
-    find(".sidebar [data-tag-name='ruby']").click
-    assert_text both.url
-    assert_text ruby_only.url
-    assert_no_text unrelated.url
+    find(".sidebar__tag", text: "#tag_a").click
+    assert_text has_tag_a.url
+    assert_no_text has_tag_b.url
 
-    find(".sidebar [data-tag-name='rails']").click
-    assert_text both.url
-    assert_no_text ruby_only.url
-    assert_no_text unrelated.url
+    find(".sidebar__tag", text: "#tag_b").click
+    assert_text has_tag_b.url
+    assert_no_text has_tag_a.url
+    assert_current_path reference_archives_path(tags: [ "tag_b" ])
+  end
 
-    assert_current_path reference_archives_path(tags: [ "ruby", "rails" ])
+  test "「さらにタグを追加して絞り込む」をONに(クリック)すると、タグをクリックすると絞り込み条件(AND)に追加されるようになる" do
+    has_both_tags = @user.reference_archives.create!(url: "https://example.com/has-both-tags", tag_list: "tag_a, tag_b")
+    has_one_tag = @user.reference_archives.create!(url: "https://example.com/has-one-tag", tag_list: "tag_a")
+
+    visit reference_archives_path
+    find(".sidebar__tag", text: "#tag_a").click
+    assert_text has_one_tag.url
+
+    click_on "さらにタグを追加して絞り込む"
+    assert_selector ".tag-filter__add-mode[aria-pressed='true']"
+
+    find(".sidebar__tag", text: "#tag_b").click
+    assert_text has_both_tags.url
+    assert_no_text has_one_tag.url
+    assert_current_path reference_archives_path(tags: [ "tag_a", "tag_b" ])
+  end
+
+  test "「さらにタグを追加して絞り込む」モードは、もう一度押すか絞り込みのタグをクリアするとOFFになる" do
+    @user.reference_archives.create!(url: "https://example.com/tag-a", tag_list: "tag_a")
+
+    visit reference_archives_path(tags: [ "tag_a" ])
+
+    click_on "さらにタグを追加して絞り込む"
+    assert_selector ".tag-filter__add-mode[aria-pressed='true']"
+    click_on "さらにタグを追加して絞り込む"
+    assert_selector ".tag-filter__add-mode[aria-pressed='false']"
+
+    click_on "さらにタグを追加して絞り込む"
+    assert_selector ".tag-filter__add-mode[aria-pressed='true']"
+    click_on "タグの絞り込みをクリア"
+    assert_no_selector ".tag-filter"
   end
 
   test "絞り込み中のタグを1つずつ解除する" do
@@ -141,12 +170,12 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     visit reference_archives_path(tags: [ "ruby", "rails" ])
 
     within ".tag-filter" do
-      find("[data-tag-name='rails']").click
+      find(".tag-filter__selected-tag", text: "#rails").click
     end
     assert_current_path reference_archives_path(tags: [ "ruby" ])
 
     within ".tag-filter" do
-      find("[data-tag-name='ruby']").click
+      find(".tag-filter__selected-tag", text: "#ruby").click
     end
     assert_no_selector ".tag-filter"
     assert_current_path reference_archives_path
@@ -176,7 +205,7 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
 
     fill_in "ブックマークしたい画像のURL", with: "https://example.com/not-submitted-yet"
 
-    find(".sidebar [data-tag-name='ruby']").click
+    find(".sidebar__tag", text: "#ruby").click
 
     assert_current_path reference_archives_path(tags: [ "ruby" ])
     assert_field "ブックマークしたい画像のURL", with: "https://example.com/not-submitted-yet"

@@ -431,6 +431,7 @@ turbo-frame#reference_archives_list{
   opacity:1;
 }
 
+.tag-filter__add-mode,
 .tag-filter__clear{
   appearance:none;
   -webkit-appearance:none;
@@ -448,10 +449,17 @@ turbo-frame#reference_archives_list{
   transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
 
+.tag-filter__add-mode:hover,
 .tag-filter__clear:hover{
   background:color-mix(in srgb, var(--line) 40%, transparent);
   border-color:var(--sub);
   color:var(--text);
+}
+
+.tag-filter__add-mode.is-active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
 }
 
 /* ===== Main Content Area (Sidebar + Timeline) ===== */

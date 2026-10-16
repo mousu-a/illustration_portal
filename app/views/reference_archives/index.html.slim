@@ -2,7 +2,9 @@
 - set_meta_tags description: "保存したイラスト資料のブックマーク一覧。タグで絞り込んで、必要な資料をすぐに見つけられます。"
 
 main.reference-archives[
-  data-controller="form-errors sidebar"
+  id="reference-archives"
+  data-controller="form-errors sidebar tag-mode tag-link"
+  data-tag-link-tag-mode-outlet="#reference-archives"
   data-action="turbo:before-stream-render@document->form-errors#clearStaleErrors
     keydown.esc@window->sidebar#close
     turbo:frame-load->sidebar#close"

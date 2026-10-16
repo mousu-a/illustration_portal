@@ -22,8 +22,11 @@ module ReferenceArchivesHelper
     archive
   end
 
-  def selected_tags_path(append_tag, current_selected_tags:)
-    reference_archives_path(tags: (current_selected_tags + [ append_tag ]).uniq)
+  def tag_select_paths(tag_name, current_selected_tags:)
+    {
+      add_href: reference_archives_path(tags: (current_selected_tags + [ tag_name ]).uniq),
+      switch_href: reference_archives_path(tags: [ tag_name ])
+    }
   end
 
   def tag_deselect_path(remove_tag, current_selected_tags:)
