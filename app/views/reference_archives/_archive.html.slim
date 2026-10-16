@@ -71,8 +71,12 @@ li.archive id=dom_id(archive) data-controller="tag-list edit-form link-card"
         - archive.tags.each do |tag|
           li
             = link_to "##{tag.name}",
-              selected_tags_path(tag.name, current_selected_tags: @selected_tags),
-              class: "tag-label"
+              reference_archives_path(tags: [ tag.name ]),
+              class: "tag-label",
+              data: { \
+                **tag_select_paths(tag.name, current_selected_tags: @selected_tags),
+                action: "click->tag-link#replace" \
+              }
     - else
       p.archive__tags.archive__tags-empty data-edit-form-target="show" まだタグがついていません
     .edit-form.hidden[

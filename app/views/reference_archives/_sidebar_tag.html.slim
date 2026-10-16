@@ -1,3 +1,7 @@
 = link_to "##{tag.name} (#{tag.count})",
-  selected_tags_path(tag.name, current_selected_tags: selected_tags),
-  class: "tag-label sidebar__tag"
+  reference_archives_path(tags: [ tag.name ]),
+  class: "tag-label sidebar__tag",
+  data: { \
+    **tag_select_paths(tag.name, current_selected_tags: selected_tags),
+    action: "click->tag-link#replace" \
+  }

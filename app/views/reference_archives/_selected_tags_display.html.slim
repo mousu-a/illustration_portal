@@ -7,4 +7,5 @@ section.tag-filter aria-label="絞り込み中のタグ"
           class: "tag-filter__selected-tag" do
           = "##{tag_name}"
           span.tag-filter__remove ×
-  = link_to "タグの絞り込みをクリア", reference_archives_path, class: "tag-filter__clear"
+  button.tag-filter__add-mode type="button" aria-pressed="false" data-tag-mode-target="toggle" data-action="tag-mode#toggle" さらにタグを追加して絞り込む
+  = link_to "タグの絞り込みをクリア", reference_archives_path, class: "tag-filter__clear", data: { action: "tag-mode#reset" }

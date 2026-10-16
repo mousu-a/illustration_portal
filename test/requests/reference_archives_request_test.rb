@@ -57,6 +57,16 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
     assert_select ".sidebar__tag-group .sidebar__empty", text: "まだタグがありません", count: empty_group_count
   end
 
+  test "#index タグで絞り込み中の時だけ「さらにタグを追加して絞り込む」ボタンを表示する" do
+    @user.reference_archives.create!(url: "https://example.com/ruby", tag_list: "ruby")
+
+    get reference_archives_path
+    assert_select ".tag-filter__add-mode", count: 0
+
+    get reference_archives_path, params: { tags: [ "ruby" ] }
+    assert_select ".tag-filter__add-mode", text: "さらにタグを追加して絞り込む"
+  end
+
   test "index はブックマークが1件も無いとき空メッセージを表示する" do
     get reference_archives_path
 

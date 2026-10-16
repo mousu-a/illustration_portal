@@ -23,16 +23,17 @@ class ReferenceArchivesHelperTest < ActionView::TestCase
     assert_same @reference_archive, edit_target_for(archive_in_list)
   end
 
-  test "#selected_tags_path 選択中タグに新しいタグを加えたパスを返す" do
-    result = selected_tags_path("ruby", current_selected_tags: [ "rails" ])
+  test "#tag_select_paths 絞り込みのタグを切り替えたパスと、さらに絞り込みのタグを追加したパスをそれぞれ返す" do
+    result = tag_select_paths("ruby", current_selected_tags: [ "rails" ])
 
-    assert_equal reference_archives_path(tags: [ "rails", "ruby" ]), result
+    assert_equal reference_archives_path(tags: [ "ruby" ]), result[:switch_href]
+    assert_equal reference_archives_path(tags: [ "rails", "ruby" ]), result[:add_href]
   end
 
-  test "#selected_tags_path 既に選択済みのタグを渡した場合は重複させない" do
-    result = selected_tags_path("rails", current_selected_tags: [ "rails", "ruby" ])
+  test "#tag_select_paths 既に選択済みのタグを渡した場合、絞り込みを追加するパスで重複させない" do
+    result = tag_select_paths("rails", current_selected_tags: [ "rails", "ruby" ])
 
-    assert_equal reference_archives_path(tags: [ "rails", "ruby" ]), result
+    assert_equal reference_archives_path(tags: [ "rails", "ruby" ]), result[:add_href]
   end
 
   test "#tag_deselect_path 指定したタグを除いた残りのタグでパスを返す" do
