@@ -2,7 +2,6 @@ module ApplicationHelper
   def default_meta_tags
     {
       site: "絵師ぽ！",
-      reverse: true,
       separator: "|",
       charset: "utf-8",
       description: "絵を描く人のための資料ブックマークサービス。イラストや写真のブックマークをタグで整理して保存し、描きたいときにすぐ取り出せます。",
