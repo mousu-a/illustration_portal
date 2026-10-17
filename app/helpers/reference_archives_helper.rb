@@ -47,6 +47,13 @@ module ReferenceArchivesHelper
     group_tags
   end
 
+  def kana_row_label(kana_row)
+    chars = KANA_ROWS[kana_row]
+    return kana_row unless chars
+
+    "#{chars[0]}〜#{chars[-1]}"
+  end
+
   def kana_row_of(name)
     first_char = name.unicode_normalize(:nfkc)[0]
     normalized_first_char = first_char.tr("ァ-ヶ", "ぁ-ゖ").unicode_normalize(:nfd).delete("゙゚").tr("ぁぃぅぇぉっゃゅょゎゕゖ", "あいうえおつやゆよわかけ")
