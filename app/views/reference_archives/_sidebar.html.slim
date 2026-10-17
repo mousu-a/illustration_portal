@@ -1,6 +1,7 @@
 aside.sidebar id="sidebar" aria-label="タグ一覧"
   .sidebar__logo
-    = link_to "Illustration Portal", reference_archives_path, class: "site-header__logo", data: { turbo_frame: "_top" }
+    = link_to reference_archives_path, class: "site-header__logo", data: { turbo_frame: "_top" } do
+      = image_tag "logo.png", alt: "絵師ぽ"
     button.sidebar__close type="button" aria-label="メニューを閉じる" data-action="sidebar#close"
       svg(
         viewBox="0 0 24 24"
