@@ -118,10 +118,15 @@ button,input{ font-family:inherit; }
 }
 
 .site-header__logo{
-  font-size:22px;
-  font-weight:700;
+  display:block;
   color:var(--text);
   text-decoration:none;
+}
+
+.site-header__logo img{
+  display:block;
+  height:33px;
+  width:auto;
 }
 
 .account-menu__trigger{
@@ -495,12 +500,11 @@ turbo-frame#reference_archives_list{
   gap:20px;
   background:var(--card);
   border-right:1px solid var(--line);
-  padding:24px 16px;
+  padding:15px 16px;
 }
 
 .sidebar__logo{
-  padding-bottom:16px;
-  border-bottom:1px solid var(--line);
+  margin-bottom:10px;
 }
 
 .sidebar__section{
