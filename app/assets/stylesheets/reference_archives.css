@@ -274,32 +274,9 @@ turbo-frame#reference_archives_list{
 
 .create-form__url-field{ position:relative; }
 .create-form__url-field .form__input{
-  padding-left:42px;
   border-color:transparent;
 }
 .create-form__url-field .form__input:focus{ border-color:var(--accent); }
-.create-form__paste-btn{
-  position:absolute;
-  top:50%;
-  left:6px;
-  transform:translateY(-50%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:6px;
-  background:none;
-  border:none;
-  border-radius:var(--radius-xs);
-  color:var(--sub);
-  cursor:pointer;
-  transition:color .15s ease, background .15s ease;
-}
-.create-form__paste-btn:hover,
-.create-form__paste-btn:focus-visible{
-  color:var(--accent);
-  background:color-mix(in srgb, var(--accent) 12%, transparent);
-  outline:none;
-}
 
 .form__actions{ display:flex; align-items:center; gap:10px; justify-content:flex-start; margin-top:6px; }
 .create-form__submit{

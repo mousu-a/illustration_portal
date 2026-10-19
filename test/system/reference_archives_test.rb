@@ -46,16 +46,6 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
     assert_text "いいねやリツイート（評価）も忘れずに！"
   end
 
-  test "ペーストボタンを押すとクリップボードの内容がURL欄に入る" do
-    visit reference_archives_path
-    page.execute_script("navigator.clipboard.readText = () => Promise.resolve('https://example.com/pasted')")
-
-    click_on "クリップボードから貼り付け"
-
-    assert_field "ブックマークしたい画像のURL", with: "https://example.com/pasted"
-    assert_button "登録する", disabled: false
-  end
-
   test "ブックマークのURLがリンクカードとして展開される" do
     metadata = { title: "リンクカードタイトル", image_url: "https://example.com/image.png", favicon_url: "https://example.com/favicon.ico" }
 
