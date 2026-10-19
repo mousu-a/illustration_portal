@@ -111,4 +111,11 @@ class ReferenceArchivesHelperTest < ActionView::TestCase
     assert_equal "その他", kana_row_of("ruby")
     assert_equal "その他", kana_row_of("顔")
   end
+
+  test "#kana_row_label 行の範囲を「あ〜お」形式で返す。「その他」はそのまま返す" do
+    assert_equal "あ〜お", kana_row_label("あ")
+    assert_equal "か〜こ", kana_row_label("か")
+    assert_equal "わ〜ん", kana_row_label("わ")
+    assert_equal "その他", kana_row_label("その他")
+  end
 end

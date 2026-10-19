@@ -36,7 +36,8 @@ aside.sidebar id="sidebar" aria-label="タグ一覧"
         .sidebar__tag-groups data-view-switch-target="kanaSections"
           - group_tags_by_kana(tags).each do |kana_row, row_tags|
             section.sidebar__tag-group
-              h3.sidebar__tag-group-title = kana_row
+              h3.sidebar__tag-group-title
+                = kana_row_label(kana_row)
               - if row_tags.present?
                 ul.sidebar__tag-group-list
                   - row_tags.each do |tag|
