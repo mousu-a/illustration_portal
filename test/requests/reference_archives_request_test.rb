@@ -98,6 +98,15 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
     assert_select ".pagination-wrapper nav.pagination", count: 2
   end
 
+  test "#index ページネーションを日本語で表示する" do
+    26.times { |i| @user.reference_archives.create!(url: "https://example.com/#{i}") }
+
+    get reference_archives_path
+
+    assert_select ".pagination-wrapper nav.pagination a[rel=next]", text: /次/
+    assert_no_match(/Next|Prev|First|Last/, css_select(".pagination-wrapper").to_s)
+  end
+
   test "#destroy 成功時、上下のページネーションをまとめて置き換える" do
     archive = @user.reference_archives.create!(url: "https://example.com/deleteme")
 
