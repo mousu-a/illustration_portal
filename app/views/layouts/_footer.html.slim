@@ -1,4 +1,11 @@
 footer.site-footer
   nav.site-footer-nav aria-label="フッターナビゲーション"
-    = link_to "利用規約", terms_path, class: "site-footer-link"
-    = link_to "プライバシーポリシー", privacy_path, class: "site-footer-link"
+    .site-footer-column
+      p.site-footer-heading 規約
+      = link_to "利用規約", terms_path, class: "site-footer-link"
+      = link_to "プライバシーポリシー", privacy_path, class: "site-footer-link"
+    - if current_user
+      .site-footer-column
+        p.site-footer-heading アカウント
+        = button_to "退会する", user_path(current_user), method: :delete, class: "site-footer-link site-footer-button",
+          form: { data: { turbo_frame: "_top", turbo_confirm: "退会するとブックマークもすべて削除されます。よろしいですか？" } }

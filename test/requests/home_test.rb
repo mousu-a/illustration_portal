@@ -23,6 +23,28 @@ class HomeTest < ActionDispatch::IntegrationTest
     assert_select "footer a[href=?]", privacy_path, "プライバシーポリシー"
   end
 
+  test "footer はログイン中のみ退会ボタンを表示する" do
+    login(users(:yamada))
+
+    get terms_path
+
+    assert_select "footer form[action=?] button", user_path(users(:yamada)), "退会する"
+  end
+
+  test "footer は未ログインの場合は退会ボタンを表示しない" do
+    get terms_path
+
+    assert_select "footer form button", false
+  end
+
+  test "アカウントメニューには退会ボタンを表示しない" do
+    login(users(:yamada))
+
+    get reference_archives_path
+
+    assert_select ".account-menu__panel form[action=?]", user_path(users(:yamada)), false
+  end
+
   test "privacy はプライバシーポリシーを表示する" do
     get privacy_path
 
