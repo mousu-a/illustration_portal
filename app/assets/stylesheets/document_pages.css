@@ -65,3 +65,11 @@
   color:var(--text);
   text-decoration:underline;
 }
+
+.site-footer-button{
+  padding:0;
+  border:0;
+  background:none;
+  font:inherit;
+  cursor:pointer;
+}
