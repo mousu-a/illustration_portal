@@ -19,10 +19,24 @@ export default class extends Controller {
       if (!response.ok) return;
 
       const metadata = await response.json();
-      this.replaceLinkToCard(targetLink, metadata);
+      if (metadata.html) {
+        this.replaceLinkToXPost(targetLink, metadata.html);
+      } else {
+        this.replaceLinkToCard(targetLink, metadata);
+      }
     } catch (error) {
       console.error("metadataの取得に失敗しました:", error);
     }
+  }
+
+  replaceLinkToXPost(targetLink, html) {
+    const container = document.createElement("div");
+    container.className = "x-post-embed";
+    container.innerHTML = html;
+
+    targetLink.insertAdjacentElement("beforebegin", container);
+    targetLink.remove();
+    window.twttr?.widgets?.load(container);
   }
 
   replaceLinkToCard(targetLink, metadata) {
@@ -40,33 +54,36 @@ function generateLinkCard(url, metadata) {
   cardContainer.rel = "noopener";
   cardContainer.className = "link-card";
 
-  if (metadata.image_url) {
-    const image = document.createElement("img");
-    image.className = "link-card__image";
-    image.src = metadata.image_url;
-    image.alt = "";
-    cardContainer.appendChild(image);
-  } else {
-    cardContainer.classList.add("link-card--no-image");
-  }
-
-  const footer = document.createElement("div");
-  footer.className = "link-card__footer";
+  const header = document.createElement("div");
+  header.className = "link-card__header";
 
   if (metadata.favicon_url) {
     const favicon = document.createElement("img");
     favicon.className = "link-card__favicon";
     favicon.src = metadata.favicon_url;
     favicon.alt = "";
-    footer.appendChild(favicon);
+    header.appendChild(favicon);
   }
 
   const title = document.createElement("p");
   title.className = "link-card__title";
   title.textContent = metadata.title;
-  footer.appendChild(title);
+  header.appendChild(title);
 
-  cardContainer.appendChild(footer);
+  cardContainer.appendChild(header);
+
+  if (metadata.image_url) {
+    const image = document.createElement("img");
+    image.className = "link-card__image";
+    image.src = metadata.image_url;
+    image.alt = "";
+    cardContainer.appendChild(image);
+  }
+
+  const domain = document.createElement("p");
+  domain.className = "link-card__domain";
+  domain.textContent = new URL(url).hostname;
+  cardContainer.appendChild(domain);
 
   return cardContainer;
 }
