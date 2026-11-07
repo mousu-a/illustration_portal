@@ -102,6 +102,30 @@ class LinkCardTest < ActiveSupport::TestCase
     assert_nil result
   end
 
+  test "#fetch_metadata XのURLの場合、oEmbedのhtmlをサニタイズしてHashで返す" do
+    oembed_html = '<blockquote class="twitter-tweet"><p lang="ja">本文</p><a href="https://x.com/user/status/1">日付</a></blockquote><script>alert(1)</script>'
+    stub_response = StubResponse.new("OK", { html: oembed_html }.to_json)
+    expected = { html: '<blockquote class="twitter-tweet"><p lang="ja">本文</p><a href="https://x.com/user/status/1">日付</a></blockquote>alert(1)' }
+    requested = nil
+
+    actual = SsrfFilter.stub(:get, ->(url, **options) { requested = [ url, options[:params][:url] ]; stub_response }) do
+      LinkCard.new("https://x.com/user/status/1/photo/1").fetch_metadata
+    end
+
+    assert_equal expected, actual
+    assert_equal [ "https://publish.x.com/oembed", "https://x.com/user/status/1" ], requested
+  end
+
+  test "#fetch_metadata XのURLでoEmbedの取得に失敗した場合、nilを返す" do
+    stub_response = StubResponse.new("Not Found", "")
+
+    result = SsrfFilter.stub(:get, stub_response) do
+      LinkCard.new("https://x.com/user/status/1").fetch_metadata
+    end
+
+    assert_nil result
+  end
+
   test "#fetch_metadata 危険なURLへのリクエストはブロックし、nilを返す" do
     unsafe_url = "http://127.0.0.1/secret"
     result = LinkCard.new(unsafe_url).fetch_metadata
