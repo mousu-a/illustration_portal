@@ -3,6 +3,8 @@ require "test_helper"
 class LinkCardTest < ActiveSupport::TestCase
   StubResponse = Struct.new(:message, :body)
 
+  X_OEMBED_HTML = '<blockquote class="twitter-tweet"><p lang="ja">本文</p><a href="https://x.com/user/status/1">日付</a></blockquote>'.freeze
+
   test ".fetch_metadata 内部でnewし、#fetch_metadataの結果を返す" do
     expected = { title: "リンクカードタイトル" }
     mock_instance = Minitest::Mock.new
@@ -107,5 +109,82 @@ class LinkCardTest < ActiveSupport::TestCase
     result = LinkCard.new(unsafe_url).fetch_metadata
 
     assert_nil result
+  end
+
+  test "#fetch_metadata XのURLの場合、OGPのキーを含まずoEmbedのhtmlだけをHashで返す" do
+    stub_response = StubResponse.new("OK", { html: X_OEMBED_HTML }.to_json)
+
+    actual = SsrfFilter.stub(:get, stub_response) do
+      LinkCard.new("https://x.com/user/status/1").fetch_metadata
+    end
+
+    assert_equal({ html: X_OEMBED_HTML }, actual)
+  end
+
+  test "#fetch_metadata XのURLの場合、htmlから危険なタグや属性を取り除く" do
+    dangerous_html = <<~HTML
+      <blockquote class="twitter-tweet" onclick="steal()">
+        <p lang="ja">本文</p>
+        <img src="https://example.com/x.png" onerror="steal()">
+        <a href="javascript:steal()">リンク</a>
+        <script>steal()</script>
+      </blockquote>
+    HTML
+    stub_response = StubResponse.new("OK", { html: dangerous_html }.to_json)
+
+    actual = SsrfFilter.stub(:get, stub_response) do
+      LinkCard.new("https://x.com/user/status/1").fetch_metadata
+    end
+
+    assert_includes actual[:html], '<blockquote class="twitter-tweet">'
+    assert_includes actual[:html], '<p lang="ja">本文</p>'
+    dangerous_tags_and_attributes = [ "onclick", "onerror", "javascript:", "<script", "<img" ]
+    dangerous_tags_and_attributes.each do |dangerous_tag_or_attribute|
+      assert_not_includes actual[:html], dangerous_tag_or_attribute
+    end
+  end
+
+  test "#fetch_metadata XのURLの末尾に/photo/や/video/が付いている場合、取り除いてfetchする" do
+    stub_response = StubResponse.new("OK", { html: X_OEMBED_HTML }.to_json)
+    expected_request = Minitest::Mock.new
+    expected_request.expect(
+      :call, stub_response, [ LinkCard::OEMBED_ENDPOINT ],
+      params: { url: "https://x.com/user/status/1", omit_script: true, dnt: true, lang: "ja" },
+      http_options: LinkCard::HTTP_OPTIONS
+    )
+    expected_request.expect(
+      :call, stub_response, [ LinkCard::OEMBED_ENDPOINT ],
+      params: { url: "https://x.com/user/status/2", omit_script: true, dnt: true, lang: "ja" },
+      http_options: LinkCard::HTTP_OPTIONS
+    )
+
+    SsrfFilter.stub(:get, expected_request) do
+      LinkCard.new("https://x.com/user/status/1/photo/1").fetch_metadata
+      LinkCard.new("https://x.com/user/status/2/video/1").fetch_metadata
+    end
+
+    assert_mock expected_request
+  end
+
+  test "#fetch_metadata Xのドメインでも投稿以外のURLの場合、oEmbedではなくOGPから取得する" do
+    html = <<~HTML
+      <html><head>
+        <meta property="og:title" content="プロフィール">
+        <meta property="og:url" content="https://x.com/user">
+        <meta property="og:image" content="https://example.com/image.png">
+      </head></html>
+    HTML
+    stub_response = StubResponse.new("OK", html)
+    expected_metadata = {
+      title: "プロフィール",
+      image_url: "https://example.com/image.png",
+      favicon_url: nil
+    }
+
+    actual = SsrfFilter.stub(:get, stub_response) do
+      LinkCard.new("https://x.com/user").fetch_metadata
+    end
+
+    assert_equal expected_metadata, actual
   end
 end

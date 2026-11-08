@@ -58,6 +58,23 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
       within ".archives" do
         assert_selector ".link-card"
         assert_text "リンクカードタイトル"
+        assert_selector ".link-card__domain", text: "example.com"
+        assert_no_selector ".archive__url"
+      end
+    end
+  end
+
+  test "XのURLは投稿の埋め込みとして展開される" do
+    metadata = { html: '<blockquote class="twitter-tweet"><p>投稿本文</p></blockquote>' }
+
+    LinkCard.stub(:fetch_metadata, metadata) do
+      visit reference_archives_path
+
+      fill_in "ブックマークしたい画像のURL", with: "https://x.com/user/status/1"
+      click_on "登録する"
+
+      within ".archives" do
+        assert_selector ".x-post-embed"
         assert_no_selector ".archive__url"
       end
     end
