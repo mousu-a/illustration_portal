@@ -14,6 +14,12 @@ module ActiveSupport
     fixtures :all
 
     include OmniAuthSupport
+    include RateLimitSupport
+
+    # レート制限のカウンタがテスト間で残らないように消す
+    setup do
+      Rails.cache.clear
+    end
   end
 end
 

@@ -1,5 +1,10 @@
 class ReferenceArchivesController < ApplicationController
+  MONTHLY_CREATE_LIMIT = 500
+
   before_action :require_login
+  # 登録の回数だけを数える。削除で件数を戻しても、登録のたびに数えるので回避できない
+  rate_limit to: MONTHLY_CREATE_LIMIT, within: 1.month, by: -> { current_user.id },
+    with: :render_rate_limited, only: :create
   before_action :set_reference_archive, only: [ :update, :destroy ]
 
   def index
@@ -56,6 +61,15 @@ class ReferenceArchivesController < ApplicationController
   end
 
   private
+
+  def render_rate_limited
+    respond_to do |format|
+      format.turbo_stream { render :rate_limited, status: :too_many_requests }
+      format.html do
+        redirect_to reference_archives_path, alert: t("reference_archives.rate_limited.title"), status: :see_other
+      end
+    end
+  end
 
   def set_reference_archive
     @reference_archive = current_user.reference_archives.find(params[:id])

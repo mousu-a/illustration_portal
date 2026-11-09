@@ -1,0 +1,16 @@
+dialog.modal[
+  aria-labelledby="rate_limited_modal_title"
+  aria-describedby="rate_limited_modal_body"
+  data-controller="modal"
+  data-action="close->modal#remove click->modal#closeOnBackdrop"
+  data-turbo-temporary=true
+]
+  .modal__card
+    .modal__icon aria-hidden="true"
+      svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        circle cx="12" cy="12" r="9"
+        polyline points="12 7 12 12 15 14"
+    h2.modal__title id="rate_limited_modal_title" = t("reference_archives.rate_limited.title")
+    p.modal__body id="rate_limited_modal_body" = t("reference_archives.rate_limited.body", limit: ReferenceArchivesController::MONTHLY_CREATE_LIMIT)
+    .modal__actions
+      button.btn type="button" data-action="modal#close" autofocus=true 閉じる

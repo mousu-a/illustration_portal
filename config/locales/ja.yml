@@ -6,5 +6,9 @@ ja:
       reference_archive:
         url: "URL"
         tag_list: "タグ"
+  reference_archives:
+    rate_limited:
+      title: "登録の回数が上限に達しました"
+      body: "1か月の登録回数が上限（%{limit}回）に達したため、ブックマークの登録を停止しています。今回の登録は実行されていません。一覧の閲覧・更新・削除は、これまでどおりご利用いただけます。"
   users:
     guest: "ゲスト"
