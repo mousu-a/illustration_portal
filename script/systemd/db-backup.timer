@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the DB backup every day at 03:00 JST
+
+[Timer]
+# UTC 18:00 = 日本時間 3:00
+OnCalendar=*-*-* 18:00:00 UTC
+# VPSが止まっていて実行できなかった分は、起動後に実行する
+Persistent=true
+
+[Install]
+WantedBy=timers.target

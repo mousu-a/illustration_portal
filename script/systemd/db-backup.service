@@ -1,0 +1,14 @@
+[Unit]
+Description=Back up the production DB to S3 Glacier Deep Archive
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+# S3_BUCKET / HEALTHCHECK_URL / AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_DEFAULT_REGION を書いたファイル
+EnvironmentFile=/etc/db-backup.env
+# systemd の既定のPATHには、snap版の aws が入っている /snap/bin が含まれないため追加する
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+ExecStart=/usr/local/bin/backup_db.sh
+# aws などが固まった場合に、次の日の実行が詰まらないようにする
+TimeoutStartSec=2h
