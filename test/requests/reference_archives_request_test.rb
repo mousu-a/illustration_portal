@@ -301,4 +301,103 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
     assert_turbo_stream action: "before", target: "archives_list"
     assert_match "ブックマークが見つからないようです", response.body
   end
+
+  test "create は月の上限を超えると保存せず、429 でモーダルを表示する" do
+    use_up_create_limit(@user)
+
+    assert_no_difference("ReferenceArchive.count") do
+      post reference_archives_path,
+        params: { reference_archive: { url: "https://example.com/over-limit" } },
+        as: :turbo_stream
+    end
+
+    assert_turbo_stream status: :too_many_requests, action: "update", target: "modal"
+    assert_match "登録の回数が上限に達しました", response.body
+    assert_match "上限（#{ReferenceArchivesController::MONTHLY_CREATE_LIMIT}回）", response.body
+  end
+
+  test "create は上限ちょうどの回数目までは保存できる" do
+    use_up_create_limit(@user, count: ReferenceArchivesController::MONTHLY_CREATE_LIMIT - 1)
+
+    assert_difference("ReferenceArchive.count", 1) do
+      post reference_archives_path, params: { reference_archive: { url: "https://example.com/last-one" } }
+    end
+
+    assert_redirected_to reference_archives_path
+  end
+
+  test "update は登録の上限に達していても実行できる" do
+    archive = @user.reference_archives.create!(url: "https://example.com/before")
+    use_up_create_limit(@user)
+
+    patch reference_archive_path(archive), params: { reference_archive: { url: "https://example.com/after" } }
+
+    assert_redirected_to reference_archives_path
+    assert_equal "https://example.com/after", archive.reload.url
+  end
+
+  test "destroy は登録の上限に達していても実行できる" do
+    archive = @user.reference_archives.create!(url: "https://example.com/deleteme")
+    use_up_create_limit(@user)
+
+    assert_difference("ReferenceArchive.count", -1) do
+      delete reference_archive_path(archive)
+    end
+
+    assert_redirected_to reference_archives_path
+  end
+
+  test "登録したあとに削除しても、登録の回数は減らない" do
+    post reference_archives_path, params: { reference_archive: { url: "https://example.com/loop" } }
+    delete reference_archive_path(@user.reference_archives.last)
+
+    assert_equal 1, Rails.cache.read(create_rate_limit_key(@user))
+  end
+
+  test "上限に達したユーザーがいても、別のユーザーは操作できる" do
+    use_up_create_limit(@user)
+    delete logout_path
+    login(@other_user)
+
+    assert_difference("ReferenceArchive.count", 1) do
+      post reference_archives_path, params: { reference_archive: { url: "https://example.com/other-user" } }
+    end
+
+    assert_redirected_to reference_archives_path
+  end
+
+  test "index は上限に達していても表示できる" do
+    use_up_create_limit(@user)
+
+    get reference_archives_path
+
+    assert_response :success
+  end
+
+  test "HTML形式で上限を超えた場合は、保存せず一覧へリダイレクトしてフラッシュで知らせる" do
+    use_up_create_limit(@user)
+
+    assert_no_difference("ReferenceArchive.count") do
+      post reference_archives_path, params: { reference_archive: { url: "https://example.com/over-limit" } }
+    end
+
+    assert_redirected_to reference_archives_path
+    assert_equal "登録の回数が上限に達しました", flash[:alert]
+  end
+
+  test "未ログインの場合は、上限の判定より先にトップページへリダイレクトする" do
+    use_up_create_limit(@user)
+    delete logout_path
+
+    post reference_archives_path, params: { reference_archive: { url: "https://example.com/not-logged-in" } }
+
+    assert_redirected_to root_path
+  end
+
+  test "保存に失敗した操作も、回数として数える" do
+    post reference_archives_path, params: { reference_archive: { url: "" } }
+
+    assert_response :unprocessable_entity
+    assert_equal 1, Rails.cache.read(create_rate_limit_key(@user))
+  end
 end

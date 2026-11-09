@@ -269,4 +269,30 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
   ensure
     page.current_window.resize_to(1400, 1400)
   end
+
+  test "登録の回数が上限に達していると、保存されずにモーダルが表示され、閉じるボタンで閉じられる" do
+    use_up_create_limit(@user)
+    visit reference_archives_path
+
+    fill_in "ブックマークしたい画像のURL", with: "https://example.com/over-limit"
+    click_on "登録する"
+
+    assert_selector "dialog[open]", text: "登録の回数が上限に達しました"
+    assert_equal 0, @user.reference_archives.count
+
+    within("dialog") { click_on "閉じる" }
+    assert_no_selector "dialog"
+  end
+
+  test "上限のモーダルはEscキーでも閉じられる" do
+    use_up_create_limit(@user)
+    visit reference_archives_path
+
+    fill_in "ブックマークしたい画像のURL", with: "https://example.com/over-limit"
+    click_on "登録する"
+    assert_selector "dialog[open]"
+
+    find("dialog").send_keys(:escape)
+    assert_no_selector "dialog"
+  end
 end
