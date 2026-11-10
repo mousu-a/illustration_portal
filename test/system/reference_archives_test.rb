@@ -40,10 +40,10 @@ class ReferenceArchivesTest < ApplicationSystemTestCase
 
   test "URLを入力すると元サイトでのいいねやリツイート（評価）をリマインドする" do
     visit reference_archives_path
-    assert_no_text "いいねやリツイート（評価）も忘れずに！"
+    assert_no_text "URL元のいいねやリツイートもお忘れなく！"
 
     fill_in "ブックマークしたい画像のURL", with: "https://example.com/reminder"
-    assert_text "いいねやリツイート（評価）も忘れずに！"
+    assert_text "URL元のいいねやリツイートもお忘れなく！"
   end
 
   test "ブックマークのURLがリンクカードとして展開される" do
