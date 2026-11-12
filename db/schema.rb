@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_07_144951) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_12_045707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,7 +51,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_07_144951) do
     t.string "name"
     t.integer "taggings_count", default: 0
     t.datetime "updated_at", null: false
+    t.string "reading"
     t.index ["name"], name: "index_tags_on_name", unique: true
+    t.index ["reading"], name: "index_tags_on_reading"
   end
 
   create_table "users", force: :cascade do |t|

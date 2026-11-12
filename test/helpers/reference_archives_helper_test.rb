@@ -98,6 +98,34 @@ class ReferenceArchivesHelperTest < ActionView::TestCase
     assert_equal [ "ruby", "顔" ], result["その他"].map(&:name)
   end
 
+  test "#group_tags_by_kana 漢字タグは読みの先頭の仮名でグループ化する" do
+    tags = [ [ "背景", "はいけい" ], [ "顔", "かお" ], [ "あお", "あお" ] ].map do |name, reading|
+      ActsAsTaggableOn::Tag.new(name: name, reading: reading)
+    end
+    result = group_tags_by_kana(tags)
+
+    assert_equal [ "背景" ], result["は"].map(&:name)
+    assert_equal [ "顔" ], result["か"].map(&:name)
+    assert_equal [ "あお" ], result["あ"].map(&:name)
+    assert_equal [], result["その他"]
+  end
+
+  test "#group_tags_by_kana 同じ行の中では読みの順に並べる" do
+    tags = [ [ "背景", "はいけい" ], [ "反射", "はんしゃ" ], [ "光", "ひかり" ] ].map do |name, reading|
+      ActsAsTaggableOn::Tag.new(name: name, reading: reading)
+    end
+    result = group_tags_by_kana(tags)
+
+    assert_equal [ "背景", "反射", "光" ], result["は"].map(&:name)
+  end
+
+  test "#group_tags_by_kana 読みが仮名でないタグ（英数字）は「その他」にまとめる" do
+    tags = [ ActsAsTaggableOn::Tag.new(name: "ruby", reading: "ruby") ]
+    result = group_tags_by_kana(tags)
+
+    assert_equal [ "ruby" ], result["その他"].map(&:name)
+  end
+
   test "#kana_row_of 先頭の文字が属する仮名を返す" do
     assert_equal "あ", kana_row_of("あお")
     assert_equal "か", kana_row_of("カメラ")

@@ -32,8 +32,18 @@ FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips libyaml-dev pkg-config && \
+    apt-get install --no-install-recommends -y build-essential git libclang-dev libpq-dev libvips libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# lindera（タグの読み仮名生成）のビルドには Rust 1.88 以上が必要。
+# apt のパッケージは古いため rustup で入れる（build ステージだけなので最終イメージには含まれない）
+ENV RUSTUP_HOME="/opt/rustup" \
+    CARGO_HOME="/opt/cargo" \
+    PATH="/opt/cargo/bin:${PATH}"
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
+
+# lindera に IPADIC 辞書を埋め込む（Gemfile のコメント参照）
+ENV LINDERA_FEATURES="embed-ipadic"
 
 # Install application gems
 COPY vendor/* ./vendor/

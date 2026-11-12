@@ -48,7 +48,7 @@ aside.sidebar id="sidebar" aria-label="タグ一覧"
           h3.sidebar__search-results-title data-tag-search-target="matchLabel" ヒットしたタグ
           ul.sidebar__tag-group-list
             - sort_for_suggestions(tags).each do |tag|
-              li data-tag-search-target="tag" data-tag-search-name=tag.name
+              li data-tag-search-target="tag" data-tag-search-name=tag.name data-tag-search-reading=tag.reading
                 = render "sidebar_tag", tag:, selected_tags:
           p.sidebar__empty data-tag-search-target="emptyLabel" hidden=true ヒットするタグがありませんでした
       - else

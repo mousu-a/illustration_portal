@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { normalizeTag } from "lib/normalize_tag";
+import { matchesTag, normalizeTag } from "lib/normalize_tag";
 
 const MAX_SUGGESTIONS = 10;
 
@@ -27,9 +27,8 @@ export default class extends Controller {
     const alreadyEnteredTags = new Set(inputWords.slice(0, -1).map(normalizeTag));
 
     const matchedTags = this.tagTargets.filter((tag) => {
-      const tagName = normalizeTag(tag.dataset.tagName);
-      const isDuplicate = alreadyEnteredTags.has(tagName);
-      return tagName.includes(keyword) && !isDuplicate;
+      const isDuplicate = alreadyEnteredTags.has(normalizeTag(tag.dataset.tagName));
+      return matchesTag(keyword, tag.dataset.tagName, tag.dataset.tagReading) && !isDuplicate;
     });
 
     return matchedTags;

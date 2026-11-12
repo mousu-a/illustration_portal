@@ -5,6 +5,10 @@ on:
   push:
     branches: [ main ]
 
+# lindera（タグの読み仮名生成）に IPADIC 辞書を埋め込んでビルドする。bundle install より前に必要
+env:
+  LINDERA_FEATURES: embed-ipadic
+
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
