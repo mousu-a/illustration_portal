@@ -21,6 +21,8 @@ gem "ruby-vips", "~> 2.0"
 gem "stimulus-rails"
 gem "slim-rails"
 gem "acts-as-taggable-on"
+# タグの読み仮名生成（形態素解析）。インストール時に LINDERA_FEATURES="embed-ipadic" が必要（Dockerfile / CI 参照）
+gem "lindera"
 gem "kaminari"
 gem "rails-i18n"
 gem "omniauth-google-oauth2", "~> 1.2"
