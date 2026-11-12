@@ -40,11 +40,15 @@ module ReferenceArchivesHelper
 
   def group_tags_by_kana(tags)
     group_tags = (KANA_ROWS.keys + [ KANA_OTHER_GROUP ]).index_with { [] }
-    tags.sort_by(&:name).each do |tag|
-      kana_row = kana_row_of(tag.name)
-      group_tags[kana_row] << tag
+    tags.sort_by { |tag| kana_key(tag) }.each do |tag|
+      group_tags[kana_row_of(kana_key(tag))] << tag
     end
     group_tags
+  end
+
+  # 五十音の判定・並び替えに使う文字列。漢字タグは読み仮名を使い、読みが無ければタグ名を使う
+  def kana_key(tag)
+    tag.reading.presence || tag.name
   end
 
   def kana_row_label(kana_row)

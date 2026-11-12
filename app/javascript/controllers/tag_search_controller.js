@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { normalizeTag } from "lib/normalize_tag";
+import { matchesTag, normalizeTag } from "lib/normalize_tag";
 
 export default class extends Controller {
   static targets = ["input", "tag", "matchLabel", "emptyLabel"];
@@ -25,10 +25,9 @@ export default class extends Controller {
   matchedTags() {
     const keyword = normalizeTag(this.inputTarget.value);
 
-    const matchedTags = this.tagTargets.filter((tag) => {
-      const tagName = normalizeTag(tag.dataset.tagSearchName);
-      return tagName.includes(keyword);
-    });
+    const matchedTags = this.tagTargets.filter((tag) =>
+      matchesTag(keyword, tag.dataset.tagSearchName, tag.dataset.tagSearchReading),
+    );
 
     return matchedTags;
   }

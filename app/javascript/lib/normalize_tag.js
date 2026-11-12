@@ -8,3 +8,8 @@ export function normalizeTag(str) {
       .trim()
   );
 }
+
+// タグ名、または読み仮名（漢字タグ用。未設定なら空）のどちらかにキーワードが含まれるか
+export function matchesTag(keyword, name, reading = "") {
+  return normalizeTag(name).includes(keyword) || normalizeTag(reading ?? "").includes(keyword);
+}

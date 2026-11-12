@@ -43,6 +43,16 @@ class ReferenceArchivesRequestTest < ActionDispatch::IntegrationTest
     assert_select ".tag-suggestions .tag-label", text: "#illustration"
   end
 
+  test "#index タグの読みをサジェストとサイドバー検索の属性に出力する" do
+    @user.reference_archives.create!(url: "https://example.com/reading", tag_list: "背景")
+
+    get reference_archives_path
+
+    assert_response :success
+    assert_select ".tag-suggestions .tag-label[data-tag-reading=?]", "はいけい"
+    assert_select "[data-tag-search-target=tag][data-tag-search-reading=?]", "はいけい"
+  end
+
   test "#index サイドバーのタグを五十音の行ごとにグループ分けして表示する" do
     tag_names = [ "あお", "カメラ", "ruby" ]
     @user.reference_archives.create!(url: "https://example.com/kana", tag_list: tag_names)

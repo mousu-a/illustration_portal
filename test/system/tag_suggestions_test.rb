@@ -34,6 +34,21 @@ class TagSuggestionsTest < ApplicationSystemTestCase
     assert_no_selector ".tag-suggestions .tag-label"
   end
 
+  test "漢字のタグは読み仮名でもサジェストされる" do
+    fill_in "ブックマークにつけるタグ", with: "はい"
+
+    within ".tag-suggestions" do
+      assert_text "#背景"
+      assert_no_text "#ruby"
+    end
+  end
+
+  test "サイドバーのタグ検索は漢字のタグを読み仮名でもヒットする" do
+    fill_in "タグを検索", with: "はい"
+
+    assert_selector ".sidebar__search-results .sidebar__tag", text: "#背景"
+  end
+
   test "タグ入力中の語に一致するタグが無ければサジェストは表示しない" do
     fill_in "ブックマークにつけるタグ", with: "zzz"
 
